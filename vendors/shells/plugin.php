@@ -26,13 +26,13 @@
             switch( $this->args[0] )
             {
                 case 'add-rep':
-                    $this->_addrep( $this->args[1] );
+                    $this->_addRep( $this->args[1] );
                     break;
                 case 'rem-rep':
-                    $this->_remrep( $this->args[1] );
+                    $this->_remRep( $this->args[1] );
                     break;
                 case 'list-rep':
-//                    $this->_listrep( $this->args[1]);
+//                    $this->_listRep( $this->args[1]);
                     break;
                 case 'find':
                     $this->_find( $this->args[1] );
@@ -103,15 +103,24 @@
             $this->out( '' );
         }
         
-        function _addrep( $url )
+        function _addRep( $url )
+        {
+            if( App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            {
+                $repositoriesManager = new RepositoriesManagerPM( $this );
+                $repositoriesManager->add( $url );
+            }
+            else
+            {
+                $this->out('capeta');
+            }
+        }
+
+        function _remRep( $url )
         {
         }
 
-        function _remrep( $url )
-        {
-        }
-
-        function _listrep( $url = null )
+        function _listRep( $url = null )
         {
         }
 
