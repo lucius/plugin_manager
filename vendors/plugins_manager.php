@@ -1,8 +1,7 @@
 <?php
 
-    class PluginsManager
+    class PluginsManager extends ImprovedCakeShell
     {
-
     }
 
 ?>

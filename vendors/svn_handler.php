@@ -1,6 +1,7 @@
 <?php
 
-    class SvnHandlerPM
+    class SvnHandlerPM extends ImprovedCakeShell
+
     {
     }
 

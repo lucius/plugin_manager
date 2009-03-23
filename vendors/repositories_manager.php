@@ -1,6 +1,7 @@
 <?php
 
-    class RepositoriesManagerPM
+    class RepositoriesManagerPM extends ImprovedCakeShell
+
     {
     }
 
