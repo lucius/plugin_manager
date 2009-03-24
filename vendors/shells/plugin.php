@@ -11,8 +11,20 @@
 
     class PluginShell extends ImprovedCakeShell 
     {
+        var $proxy = false;
+
+        function _initialize( )
+        {
+            if( !empty($this->params['proxy']) )
+            {
+                $this->proxy = $this->params['proxy'];
+            }
+        }
+
         function main()
         {
+            $this->_initialize( );
+
             if( empty($this->args) )
             {
                 $this->formattedOut( __d('plugin', 'Voce precisa especifiar o que deseja fazer...', true) );
@@ -20,6 +32,8 @@
 
                 $this->_listaOpcoesDisponiveis( );
 
+                $this->out( '' );
+                $this->hr( );
                 exit;
             }
 
@@ -32,7 +46,7 @@
                     $this->_remRep( $this->args[1] );
                     break;
                 case 'list-rep':
-//                    $this->_listRep( $this->args[1]);
+                    ( isset($this->args[1]) ) ? $this->_listRep( $this->args[1] ) : $this->_listRep( );
                     break;
                 case 'find':
                     $this->_find( $this->args[1] );
@@ -55,7 +69,8 @@
                     $this->_listaOpcoesDisponiveis( );
                     break;
             }
-
+            $this->out( '' );
+            $this->hr( );
         }
 
         function _listaOpcoesDisponiveis( )
@@ -79,49 +94,114 @@
             $this->formattedOut( __d('plugin', '    Lista os plugins disponiveis no repositorio especificado', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Busca um plugin na lista de repositorios disponiveis', true) );
             $this->out( '' );
             
-            $this->formattedOut( __d('plugin', '  [fg=yellow]list[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]list[/fg] [fg=red](Indisponivel)[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Lista os plugins instalados atualmente', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Instala o plugin especificado na url, executando o script', true) );
             $this->formattedOut( __d('plugin', '    de instalacao, se existir', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]uninstall[/fg] [fg=green]nome_plugin[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Remove o plugin especificado, executando o script de desinstalacao', true) );
-            $this->formattedOut( __d('plugin', '    se existir', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]uninstall[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
+            $this->formattedOut( __d('plugin', '    Remove o plugin especificado, executando o script de', true) );
+            $this->formattedOut( __d('plugin', '    desinstalacao se existir', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]update[/fg] [fg=green]nome_plugin[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Verifica se existem atualizacoes disponiveis para o plugin especificado', true) );
-            $this->formattedOut( __d('plugin', '    e as instala', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]update[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
+            $this->formattedOut( __d('plugin', '    Verifica se existem atualizacoes disponiveis para o plugin', true) );
+            $this->formattedOut( __d('plugin', '    especificado e as instala', true) );
+            $this->out( '' );
+            
+            $this->formattedOut( __d('plugin', '  [fg=yellow]-proxy[/fg] [fg=green]username:password@endereco.do.proxy:porta[/fg]', true) );
+            $this->formattedOut( __d('plugin', '    Utiliza as configuracoes do proxy para realizar as operacoes', true) );
+            $this->formattedOut( __d('plugin', '    desejadas', true) );
             $this->out( '' );
         }
         
         function _addRep( $url )
         {
-            if( App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
             {
-                $repositoriesManager = new RepositoriesManagerPM( $this );
-                $repositoriesManager->add( $url );
+                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
+
+                $this->out( '' );
+                $this->hr( );
+                exit;
             }
-            else
-            {
-                $this->out('capeta');
-            }
+
+            $repositoriesManager = new RepositoriesManagerPM( $this );
+            $repositoriesManager->add( $url );
         }
 
         function _remRep( $url )
         {
+            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            {
+                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
+
+                $this->out( '' );
+                $this->hr( );
+                exit;
+            }
+
+            $repositoriesManager = new RepositoriesManagerPM( $this );
+            $repositoriesManager->remove( $url );
         }
 
         function _listRep( $url = null )
         {
+            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            {
+                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
+
+                $this->out( '' );
+                $this->hr( );
+                exit;
+            }
+
+            $repositoriesManager = new RepositoriesManagerPM( $this );
+
+            if( empty($url) )
+            {
+                $this->formattedOut( __d('plugin', 'Selecione um Repositorio para listar', true) );
+                $this->out( '' );
+
+                $repositories = $repositoriesManager->get( );
+
+                $counter = 1;
+
+                foreach( $repositories as $repositorie )
+                {
+                    $this->formattedOut( String::insert(__d('plugin', '[fg=green](:counter)[/fg]  [u]:rep_url[/u]', true), array('counter' => $counter++, 'rep_url' => $repositorie)) );
+                }
+
+                $options = range(1, count($repositories));
+                $rep = $this->in( '' );
+
+                $this->out( '' );
+                if( in_array($rep, $options) )
+                {
+                    $flipped = array_flip($options);
+                    $url = $repositories[$flipped[$rep]];
+                }
+                else
+                {
+                    $this->formattedOut( __d('plugin', '[bg=red][fg=black] FAIL [/fg][/bg] Opcao Invalida', true) );
+
+                    $this->out( '' );
+                    $this->hr( );
+                    exit;
+                }
+
+
+            }
+
+            $repositoriesManager->showRepositorieContent( $url, $this->proxy );
         }
 
         function _find( $plugin_name )

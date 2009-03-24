@@ -21,6 +21,9 @@
             }
         }
 
+        /* 
+         * Inserir Autenticacao no proxy
+         */
         function install( )
         {
             $this->out( __d('plugin', 'Instalando dependencias necessarias para o funcionamento do gerenciador de Plugins...', true) );
@@ -40,6 +43,20 @@
             {
                 $this->out( __d('plugin', '                 Falha na instalacao!', true) );
             }
+
+        }
+
+/*
+ * Fazer Corretamente
+ */
+        function _excludeGitFolder( )
+        {
+            if( !App::import('Folder') && !App::import('File') )
+            {
+
+            }
+            $app = new Folder( APP.'plugins/improved_cake_shell/.git/' );
+            $app->delete();
         }
     }
 
