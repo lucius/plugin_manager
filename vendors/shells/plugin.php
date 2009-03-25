@@ -69,7 +69,6 @@
                     $this->_listaOpcoesDisponiveis( );
                     break;
             }
-            $this->out( '' );
             $this->hr( );
         }
 
@@ -98,7 +97,7 @@
             $this->formattedOut( __d('plugin', '    Busca um plugin na lista de repositorios disponiveis', true) );
             $this->out( '' );
             
-            $this->formattedOut( __d('plugin', '  [fg=yellow]list[/fg] [fg=red](Indisponivel)[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]list[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Lista os plugins instalados atualmente', true) );
             $this->out( '' );
 
@@ -211,6 +210,9 @@
 
         function _list( )
         {
+            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+
+            $pluginsManager->listInstalledPlugins( );
         }
 
         function _install( $url )
