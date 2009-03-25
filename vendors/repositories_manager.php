@@ -143,6 +143,22 @@
         {
             $this->mainShell->formattedOut( String::insert(__d('plugin', 'Listando plugins disponiveis em [u]:rep_url[/u]', true), array('rep_url'=> $_url)) );
 
+            $pluginList = $this->getRepositorieContent( $_url, $_proxy );
+
+            $this->mainShell->out( '' );
+            foreach( $pluginList[2] as $key => $pluginTitle )
+            {
+                $this->mainShell->formattedOut( String::insert(__d('plugin', "[fg=green]    :pluginTitle[/fg]\n      :url\n", true), array('pluginTitle'=> $pluginTitle, 'url' => $pluginList[1][$key])) );
+            }
+
+            if( !count($pluginList[2]) )
+            {
+                $this->mainShell->formattedOut( __d('plugin', 'Nao foram encontrados plugins no repositorio', true) );
+            }
+        }
+
+        function getRepositorieContent( $_url, $_proxy = false )
+        {
             $content = $this->_getUrlContent( $_url, $_proxy ); 
 
             if( $content['erro'] )
@@ -164,16 +180,7 @@
             $text = html_entity_decode($content['text']);
             preg_match_all( '/\<li\>\<a href="(.*)"\>(.*)\<\/a\>\<\/li\>/i', $text, $pluginList );
 
-            $this->mainShell->out( '' );
-            foreach( $pluginList[2] as $key => $pluginTitle )
-            {
-                $this->mainShell->formattedOut( String::insert(__d('plugin', '[fg=green]    :pluginTitle[/fg] - :url', true), array('pluginTitle'=> $pluginTitle, 'url' => $pluginList[1][$key])) );
-            }
-
-            if( !count($pluginList[2]) )
-            {
-                $this->mainShell->formattedOut( __d('plugin', 'Nao foram encontrados plugins no repositorio', true) );
-            }
+            return $pluginList;
         }
 
         function _validateHttpErrors( $_text )

@@ -204,8 +204,11 @@
             $repositoriesManager->showRepositorieContent( $url, $this->proxy );
         }
 
-        function _find( $plugin_name )
+        function _find( $pluginName )
         {
+            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+
+            $pluginsManager->find( $pluginName );
         }
 
         function _list( )
