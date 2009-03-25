@@ -95,6 +95,29 @@
             return $return;
         }
 
+        function _isUrl( $_url )
+        {
+            $pattern = "/(^(git)?|^(svn)?)\:\/\/([^\.])+\..*/";
+
+            return preg_match( $pattern, $_url );
+        }
+        
+        function _findPluginUrl( $_pluginName )
+        {
+            $avaliable = $this->_getListAvaliablePlugins( );
+
+            foreach( $avaliable as $plugin )
+            {
+                if( $plugin['name'] == $_pluginName )
+                {
+                    return $plugin['url'];
+                }
+            }
+
+            return false;
+        }
+
+
         function listInstalledPlugins( )
         {
             $this->mainShell->formattedOut( String::insert(__d('plugin', "Listando plugins instalados em [u]:app[/u]:\n", true), array('app'=> APP_DIR)) );
@@ -122,9 +145,11 @@
 
         function find( $_pattern )
         {
-            $this->mainShell->formattedOut( String::insert(__d('plugin', 'Buscando plugins: [u]:pattern[/u]', true), array('pattern'=>$_pattern)) );
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "Buscando plugins: [u]:pattern[/u]\n", true), array('pattern'=>$_pattern)) );
 
             $avaliable = $this->_getListAvaliablePlugins( );
+
+            $found = false;
 
             foreach( $avaliable as $plugin )
             {
@@ -142,10 +167,35 @@
                     }
 
                     $this->mainShell->formattedOut( $out );
+
+                    $found = true;
                 }
             }
 
+            if( !$found )
+            {
+                $this->mainShell->formattedOut( __d('plugin', "Nao foram encontrados plugins\n", true) );
+                
+                $this->mainShell->hr( );
+                exit;
+            }
+
+
             $this->mainShell->formattedOut( __d('plugin', '* Plugins ja instalados', true) );
+        }
+
+        function installPlugin( $_nameOrUrl )
+        {
+            if( $this->_isUrl($_nameOrUrl) ) 
+            {
+                $url = $_nameOrUrl;
+            }
+            else
+            {
+                $url = $this->_findPluginUrl( $_nameOrUrl );
+            }
+var_dump($url);
+            // Install
         }
     }
 

@@ -218,15 +218,18 @@
             $pluginsManager->listInstalledPlugins( );
         }
 
-        function _install( $url )
+        function _install( $nameOrUrl )
+        {
+            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+
+            $pluginsManager->installPlugin( $nameOrUrl );
+        }
+
+        function _uninstall( $pluginName )
         {
         }
 
-        function _uninstall( $plugin_name )
-        {
-        }
-
-        function _update( $plugin_name )
+        function _update( $pluginName )
         {
         }
 

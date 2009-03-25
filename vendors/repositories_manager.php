@@ -141,6 +141,14 @@
 
         function showRepositorieContent( $_url, $_proxy = false )
         {
+            if( !App::import('Vendors', 'PluginManager.PluginsManager') )
+            {
+                $this->mainShell->formattedOut( __d('plugin', "Impossivel carregar [fg=red][u]PluginManager.PluginsManager[/u][/fg]\n", true) );
+                exit;
+            }
+            $pluginsManager = new PluginsManagerPM( array( 'mainShell' => $this->mainShell ) );
+
+
             $this->mainShell->formattedOut( String::insert(__d('plugin', 'Listando plugins disponiveis em [u]:rep_url[/u]', true), array('rep_url'=> $_url)) );
 
             $pluginList = $this->getRepositorieContent( $_url, $_proxy );
@@ -148,7 +156,18 @@
             $this->mainShell->out( '' );
             foreach( $pluginList[2] as $key => $pluginTitle )
             {
-                $this->mainShell->formattedOut( String::insert(__d('plugin', "[fg=green]    :pluginTitle[/fg]\n      :url\n", true), array('pluginTitle'=> $pluginTitle, 'url' => $pluginList[1][$key])) );
+                $out = String::insert( __d('plugin', "[fg=green]    :pluginTitle", true), array('pluginTitle'=> $pluginTitle) );
+
+                if( $pluginsManager->_isInstalled($pluginTitle) )
+                {
+                    $out .= __d( 'plugin', " *[/fg]\n", true );
+                }
+                else
+                {
+                    $out .= String::insert( __d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl'=> $pluginList[1][$key]) );
+                }
+
+                $this->mainShell->formattedOut( $out );
             }
 
             if( !count($pluginList[2]) )
