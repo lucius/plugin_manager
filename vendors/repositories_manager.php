@@ -10,9 +10,9 @@
 
         var $exclude = '';
 
-        function __construct( $_mainShell )
+        function __construct( $_params )
         {
-            $this->mainShell = $_mainShell;
+            $this->mainShell = $_params['mainShell'];
 
             $this->repsPath = APP."plugins/plugin_manager/.reps";
             $this->_parser( );
@@ -113,7 +113,6 @@
                 $this->mainShell->hr( );
                 exit;
             }
-
             unset( $this->repositories[array_search($_url, $this->repositories)] );
 
             if( $this->_save() )

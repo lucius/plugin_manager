@@ -122,83 +122,78 @@
             $this->formattedOut( __d('plugin', '    desejadas', true) );
             $this->out( '' );
         }
-        
-        function _addRep( $url )
+
+        function _importResource( $_resource, $_constructorParams )
         {
-            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            if( !App::import( 'Vendors', 'PluginManager.'.$_resource ) )
             {
-                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
+                $this->formattedOut( String::insert(__d('plugin', 'Impossivel carregar [fg=red][u]:resource[/u][/fg]', true), array('resource'=>$_resource)) );
 
                 $this->out( '' );
                 $this->hr( );
                 exit;
             }
 
-            $repositoriesManager = new RepositoriesManagerPM( $this );
+            $className = $_resource.'PM';
+            return new $className( $_constructorParams );
+        } 
+
+        function _addRep( $url )
+        {
+            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
             $repositoriesManager->add( $url );
         }
 
         function _remRep( $url )
         {
-            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
+            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
+            $repositoriesManager->remove( $url );
+        }
+
+        function _selectRepositorie( $_repositories )
+        {
+            $this->formattedOut( __d('plugin', 'Selecione um Repositorio para listar', true) );
+            $this->out( '' );
+
+            $this->_listFoundRepositories( $_repositories );
+            $options = range(1, count($_repositories));
+            $rep = $this->in( '' );
+
+            $this->out( '' );
+            if( in_array($rep, $options) )
             {
-                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
+                $flipped = array_flip($options);
+                $url = $_repositories[$flipped[$rep]];
+            }
+            else
+            {
+                $this->formattedOut( __d('plugin', '[bg=red][fg=black] FAIL [/fg][/bg] Opcao Invalida', true) );
 
                 $this->out( '' );
                 $this->hr( );
                 exit;
             }
 
-            $repositoriesManager = new RepositoriesManagerPM( $this );
-            $repositoriesManager->remove( $url );
+            return $url;
+        }
+
+        function _listFoundRepositories( $_repositories )
+        {
+            $counter = 1;
+
+            foreach( $_repositories as $repositorie )
+            {
+                $this->formattedOut( String::insert(__d('plugin', '[fg=green](:counter)[/fg]  [u]:rep_url[/u]', true), array('counter' => $counter++, 'rep_url' => $repositorie)) );
+            }
         }
 
         function _listRep( $url = null )
         {
-            if( !App::import( 'Vendors', 'PluginManager.RepositoriesManager' ) )
-            {
-                $this->formattedOut( __d('plugin', '[fg=red]Impossivel carregar o [u]Gerenciador de Repositorios[/u][/fg]', true) );
-
-                $this->out( '' );
-                $this->hr( );
-                exit;
-            }
-
-            $repositoriesManager = new RepositoriesManagerPM( $this );
+            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
 
             if( empty($url) )
             {
-                $this->formattedOut( __d('plugin', 'Selecione um Repositorio para listar', true) );
-                $this->out( '' );
-
-                $repositories = $repositoriesManager->get( );
-
-                $counter = 1;
-
-                foreach( $repositories as $repositorie )
-                {
-                    $this->formattedOut( String::insert(__d('plugin', '[fg=green](:counter)[/fg]  [u]:rep_url[/u]', true), array('counter' => $counter++, 'rep_url' => $repositorie)) );
-                }
-
-                $options = range(1, count($repositories));
-                $rep = $this->in( '' );
-
-                $this->out( '' );
-                if( in_array($rep, $options) )
-                {
-                    $flipped = array_flip($options);
-                    $url = $repositories[$flipped[$rep]];
-                }
-                else
-                {
-                    $this->formattedOut( __d('plugin', '[bg=red][fg=black] FAIL [/fg][/bg] Opcao Invalida', true) );
-
-                    $this->out( '' );
-                    $this->hr( );
-                    exit;
-                }
-
-
+                $url = $this->_selectRepositorie( $repositoriesManager->get() );
             }
 
             $repositoriesManager->showRepositorieContent( $url, $this->proxy );
