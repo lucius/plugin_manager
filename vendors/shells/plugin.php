@@ -127,9 +127,8 @@
         {
             if( !App::import( 'Vendors', 'PluginManager.'.$_resource ) )
             {
-                $this->formattedOut( String::insert(__d('plugin', 'Impossivel carregar [fg=red][u]:resource[/u][/fg]', true), array('resource'=>$_resource)) );
+                $this->formattedOut( String::insert(__d('plugin', "Impossivel carregar [fg=red][u]:resource[/u][/fg]\n", true), array('resource'=>$_resource)) );
 
-                $this->out( '' );
                 $this->hr( );
                 exit;
             }
@@ -193,7 +192,14 @@
 
             if( empty($url) )
             {
-                $url = $this->_selectRepositorie( $repositoriesManager->get() );
+                $repositories = $repositoriesManager->get( );
+                if( !count($repositories) )
+                {
+                    $this->formattedOut( __d('plugin', "Nao existem repositorios para serem listados\n", true) );
+                    exit;
+                }
+
+                $url = $this->_selectRepositorie( $repositories );
             }
 
             $repositoriesManager->showRepositorieContent( $url, $this->proxy );

@@ -20,14 +20,14 @@
 
         function _parser( )
         {
-            $pattern = "(http?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)";
 
             if( ! file_exists($this->repsPath) )
             {
-                $this->mainShell->formattedOut( __d('plugin', ' [fg=red]O arquivo de repositorios nao pode ser encontrado![/fg]', true) );
-                $this->mainShell->formattedOut( String::insert(__d('plugin', ' [fg=red]O local correto do arquivo e :repsPath [/fg]', true), array('repsPath'=> $this->repsPath)) );
+                $errorMessage  = __d( 'plugin', ' [fg=red]O arquivo de repositorios nao pode ser encontrado!', true );
+                $errorMessage .= String::insert( __d('plugin', "\n O local correto do arquivo e :repsPath [/fg]\n", true), array('repsPath'=> $this->repsPath) );
+                
+                $this->mainShell->formattedOut( $errorMessage );
 
-                $this->mainShell->out( '' );
                 $this->mainShell->hr( );
                 exit;
             }
@@ -36,12 +36,19 @@
                 
             foreach( $fileContent as $repositorie )
             {
-                if( preg_match($pattern, $repositorie) )
+                if( $this->_isHttp($repositorie) )
                 {
                     array_push( $this->repositories, trim($repositorie) );
                 }
             }
 
+        }
+
+        function _isHttp( $_url )
+        {
+            $pattern = "(http?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)";
+
+            return preg_match( $pattern, $_url );
         }
 
         function _find( $_url )
@@ -57,18 +64,19 @@
         function _save( )
         {
             $contents = implode("\n", $this->repositories);
-            $return = file_put_contents($this->repsPath, $contents);
+            if( file_put_contents($this->repsPath, $contents) === false )
+            {
+                return false;
+            }
 
-            return $return;
+            return true;
         }
 
         function add( $_url )
         {
-            $pattern = "(http?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)";
-
             $this->mainShell->formattedOut( String::insert(__d('plugin', 'Inserindo repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url'=> $_url)), false );
             
-            if( preg_match($pattern, $_url) )
+            if( $this->_isHttp($_url) )
             {
                 if( $this->_find($_url) )
                 {
@@ -149,18 +157,7 @@
                 exit;
             }
 
-            if( preg_match("/HTTP.* [1345][0-1][0-7]/i", $content['text']) )
-            {
-                $error = array();
-                preg_match_all("/\<title\>(.*)\<\/title\>/i", $content['text'], $error);
-
-                $this->mainShell->out( '' );
-                $this->mainShell->formattedOut( String::insert(__d('plugin', '[fg=black][bg=red] FAIL: :erro [/bg][/fg]', true), array('erro'=> $error[1][0])) );
-
-                $this->mainShell->out( '' );
-                $this->mainShell->hr( );
-                exit;
-            }
+            $this->_validateHttpErrors( $content['text'] );
 
             $pluginList = array( );
 
@@ -179,15 +176,33 @@
             }
         }
 
+        function _validateHttpErrors( $_text )
+        {
+            if( preg_match("/HTTP.* [1345][0-1][0-7]/i", $_text) )
+            {
+                $error = array();
+                preg_match_all("/\<title\>(.*)\<\/title\>/i", $_text, $error);
+
+                $this->mainShell->out( '' );
+                $this->mainShell->formattedOut( String::insert(__d('plugin', '[fg=black][bg=red] FAIL: :erro [/bg][/fg]', true), array('erro'=> $error[1][0])) );
+
+                $this->mainShell->out( '' );
+                $this->mainShell->hr( );
+                exit;
+            }
+        }
+
         function _getUrlContent( $_url, $_proxy = false )
         {
             if( !function_exists('curl_init') )
             {
-                $this->mainShell->formattedOut( __d('plugin', 'A biblioteca PHP CURL nao esta habilitada. Descomente a linha', true) );
-                $this->mainShell->formattedOut( __d('plugin', 'Descomente a linha com o conteudo', true) );
-                $this->mainShell->formattedOut( __d('plugin', '[fg=red]  -[u]extension=php_curl.so[/u][/fg] ou ', true) );
-                $this->mainShell->formattedOut( __d('plugin', '[fg=red]  -[u]extension=php_curl.dll[/u]', true) );
-                $this->mainShell->formattedOut( __d('plugin', 'no php.ini', true) );
+                $errorMessage  =  __d( 'plugin', 'A biblioteca PHP CURL nao esta habilitada. Descomente a linha', true );
+                $errorMessage .=  __d( 'plugin', "\nDescomente a linha com o conteudo", true );
+                $errorMessage .=  __d( 'plugin', "\n[fg=red]  -[u]extension=php_curl.so[/u][/fg] ou ", true );
+                $errorMessage .=  __d( 'plugin', "\n[fg=red]  -[u]extension=php_curl.dll[/u][/fg]", true );
+                $errorMessage .=  __d( 'plugin', "\nno php.ini", true );
+
+                $this->mainShell->formattedOut( $errorMessage );
 
                 $this->mainShell->out( '' );
                 $this->mainShell->hr( );
@@ -207,16 +222,16 @@
             
             curl_setopt_array( $cu, $options );
 
-            $_content['text'] = curl_exec( $cu );
+            $content['text'] = curl_exec( $cu );
 
-            if( $_content['erro'] = curl_errno($cu) )
+            if( $content['erro'] = curl_errno($cu) )
             {
-                $_content['text'] = curl_error( $cu );
+                $content['text'] = curl_error( $cu );
             }
 
             curl_close( $cu ); 
 
-            return $_content;
+            return $content;
         }
 
     }
