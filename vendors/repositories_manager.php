@@ -204,7 +204,7 @@
 
         function _validateHttpErrors( $_text )
         {
-            if( preg_match("/HTTP.* [1345][0-1][0-7]/i", $_text) )
+            if( !preg_match("/HTTP.* [2][0][0-6]/i", $_text) )
             {
                 $error = array();
                 preg_match_all("/\<title\>(.*)\<\/title\>/i", $_text, $error);
@@ -243,6 +243,8 @@
                 CURLOPT_PROXY => $_proxy,
                 CURLOPT_TIMEOUT => 10,
                 CURLOPT_HEADER => true,
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_RETURNTRANSFER => true
             );
             
