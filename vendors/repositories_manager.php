@@ -8,8 +8,6 @@
 
         var $repsPath = '';
 
-        var $exclude = '';
-
         function __construct( $_params )
         {
             $this->mainShell = $_params['mainShell'];
