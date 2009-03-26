@@ -34,7 +34,7 @@
         function _submodule( $_url, $_pluginName  )
         {
             $this->mainShell->out( '' );
-            shell_exec( 'git submodule add '.$_url.' '.APP.'plugins/'.$_pluginName );
+            shell_exec( 'git submodule add '.$_url.' plugins/'.$_pluginName );
         }
 
         function install( $_url, $_pluginName )
