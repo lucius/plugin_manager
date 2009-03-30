@@ -8,12 +8,6 @@
 
         function __construct( $_params )
         {
-            if( empty($_params['mainShell']) )
-            {
-                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black]PluginsManager sem acesso ao Shell[/fg][/bg]\n", true) );
-                exit;
-            }
-            
             $this->mainShell = $_params['mainShell'];
         }
 
@@ -26,36 +20,20 @@
             }
 
             $pluginsFolder = new Folder( APP.'plugins' );
-
             $listPluginsFolder = $pluginsFolder->ls( );
 
             return $listPluginsFolder[0];
         }
 
-        function _checkUrl( $_plugin )
+        function _getPluginUrl( $_pluginName )
         {
-            if( !App::import('Core', 'Folder') )
+            $url = false;
+
+            $urlPluginPath = APP.'plugins/'.$_pluginName.'/.url';
+            if( file_exists($urlPluginPath) )
             {
-                $this->mainShell->formattedOut( __d('plugin', "Impossivel carregar [fg=red][u]Core.Folder[/u][/fg]\n", true) );
-                exit;
+                $url = file_get_contents( $urlPluginPath );
             }
-
-            $pluginPath = APP.'plugins/'.$_plugin;
-            $pluginFolder = new Folder( $pluginPath );
-
-            $listPluginFolder = $pluginFolder->ls( );
-
-            if( in_array('.url', $listPluginFolder[1]) )
-            {
-                return $this->_getPluginUrl( $pluginPath );
-            }
-
-            return false;
-        }
-
-        function _getPluginUrl( $_pluginPath )
-        {
-            $url = file_get_contents( $_pluginPath.'/.url' );
 
             return $url;
         }
@@ -97,11 +75,26 @@
 
         function _isUrl( $_url )
         {
-            $pattern = "/(^(git)?|^(svn)?)\:\/\/([^\.])+\..*/";
+            $pattern[] = "/^(git):\/\//";
+            $pattern[] = "/\.(git)$/";
+            $pattern[] = "/^(svn):\/\//";
+            $pattern[] = "/^(http):\/\//";
+            $pattern[] = "/^(https):\/\//";
+            $pattern[] = "/^(ssh):\/\//";
 
-            return preg_match( $pattern, $_url );
+            $found = array();
+
+            foreach( $pattern as $pat )
+            {
+                if( preg_match($pat, $_url, $found) )
+                {
+                    return $found[1];
+                }
+            }
+
+            return false;
         }
-        
+
         function _findPluginUrl( $_pluginName )
         {
             $avaliable = $this->_getListAvaliablePlugins( );
@@ -117,6 +110,45 @@
             return false;
         }
 
+        function _doInstall( $_method, $_url, $_pluginName )
+        {
+            switch( $_method )
+            {
+                case 'git':
+                    $this->_installUsingGit( $_url, $_pluginName );
+                    break;
+//                 case 'svn':
+//                     $this->_installUsingSvn( $_url );
+//                     break;
+//                 case 'http':
+//                 case 'https':
+//                     if( !$this->_installUsingSvn($_url) )
+//                     {
+//                         $this->_installUsingGit( $_url, $_pluginName );
+//                     }
+//                     break;
+//                 case 'ssh':
+//                     if( !$this->_installUsingGit($_url, $_pluginName) )
+//                     {
+//                         $this->_installUsingSvn( $_url );
+//                     }
+//                     break;
+            }
+        }
+
+        function _installUsingGit( $_url, $_pluginName )
+        {
+            if( !App::import('Vendors', 'PluginManager.GitHandler') )
+            {
+            }
+
+            $params = array( 'mainShell' => $this->mainShell );
+            $gitHandler = new GitHandlerPM( $params );
+
+            $gitHandler->install( $_url, $_pluginName );
+
+            return false;
+        }
 
         function listInstalledPlugins( )
         {
@@ -128,7 +160,7 @@
             {
                 $out = String::insert( __d('plugin', '  [fg=green]:plugin', true), array('plugin'=> $plugin) );
 
-                if( $this->_checkUrl($plugin) )
+                if( $this->_getPluginUrl($plugin) !== false )
                 {
                     $out .= __d( 'plugin', " *[/fg]", true );
                 }
@@ -175,27 +207,35 @@
             if( !$found )
             {
                 $this->mainShell->formattedOut( __d('plugin', "Nao foram encontrados plugins\n", true) );
-                
+
                 $this->mainShell->hr( );
                 exit;
             }
-
 
             $this->mainShell->formattedOut( __d('plugin', '* Plugins ja instalados', true) );
         }
 
         function installPlugin( $_nameOrUrl )
         {
-            if( $this->_isUrl($_nameOrUrl) ) 
+            if( $method = $this->_isUrl($_nameOrUrl) )
             {
                 $url = $_nameOrUrl;
             }
             else
             {
-                $url = $this->_findPluginUrl( $_nameOrUrl );
+                if( $this->_isInstalled($_nameOrUrl) )
+                {
+//                    $this->update( $_nameOrUrl );
+                    exit;
+                }
+                else
+                {
+                    $pluginName = $_nameOrUrl;
+                    $url = $this->_findPluginUrl( $_nameOrUrl );
+                    $method = $this->_isUrl($url);
+                }
             }
-var_dump($url);
-            // Install
+            $this->_doInstall( $method, $url, $pluginName );
         }
     }
 
