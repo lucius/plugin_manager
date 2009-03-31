@@ -29,6 +29,8 @@
         {
             $this->mainShell->out( '' );
             shell_exec( 'git clone '.$_url.' '.APP.'plugins/'.$_pluginName );
+
+            //remover .git
         }
 
         function _submodule( $_url, $_pluginName  )

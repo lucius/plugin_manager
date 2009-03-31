@@ -93,7 +93,7 @@
             $this->formattedOut( __d('plugin', '    Lista os plugins disponiveis no repositorio especificado', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Busca um plugin na lista de repositorios disponiveis', true) );
             $this->out( '' );
             
@@ -101,7 +101,7 @@
             $this->formattedOut( __d('plugin', '    Lista os plugins instalados atualmente', true) );
             $this->out( '' );
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
+            $this->formattedOut( __d('plugin', '  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg] [fg=red](Disponivel somente para repositorios git)[/fg]', true) );
             $this->formattedOut( __d('plugin', '    Instala o plugin especificado na url, executando o script', true) );
             $this->formattedOut( __d('plugin', '    de instalacao, se existir', true) );
             $this->out( '' );

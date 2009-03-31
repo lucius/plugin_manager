@@ -73,7 +73,7 @@
             return $return;
         }
 
-        function _isUrl( $_url )
+        function _getMethod( $_url )
         {
             $pattern[] = "/^(git):\/\//";
             $pattern[] = "/\.(git)$/";
@@ -217,9 +217,10 @@
 
         function installPlugin( $_nameOrUrl )
         {
-            if( $method = $this->_isUrl($_nameOrUrl) )
+            if( $method = $this->_getMethod($_nameOrUrl) )
             {
                 $url = $_nameOrUrl;
+                //$namePlugin = 
             }
             else
             {
@@ -232,10 +233,43 @@
                 {
                     $pluginName = $_nameOrUrl;
                     $url = $this->_findPluginUrl( $_nameOrUrl );
-                    $method = $this->_isUrl($url);
+                    $method = $this->_getMethod($url);
                 }
             }
             $this->_doInstall( $method, $url, $pluginName );
+
+            $this->_execInstallScript( $pluginName );
+        }
+
+        function installDep( $_pluginName, $_url )
+        {
+            if( !($method = $this->_getMethod$_nameOrUrl)) )
+            {
+                
+            }
+
+            $this->_doInstall( $method, $url, $pluginName );
+
+            $this->_execInstallScript( $pluginName );
+        }
+
+        function _execInstallScript( $_pluginName )
+        {
+            if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
+            {
+                $className = Inflector::camelize($_pluginName.'_installer');
+                if( !App::import('Vendors', $className) )
+                {
+
+                }
+
+                $installer = new $className( $this->mainShell );
+ 
+                if( method_exists($installer, 'install' ) )
+                {
+                    $installer->install( );
+                }
+            }
         }
     }
 
