@@ -15,7 +15,7 @@
         {
             if( !shell_exec('git --version 2>/dev/null') )
             {
-                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] FAIL : Protocolo GIT nao suportado [/fg][/bg]\n", true) );
+                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] FAIL : GIT nao suportado [/fg][/bg]\n", true) );
                 exit;
             }
         }

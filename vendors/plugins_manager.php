@@ -117,24 +117,39 @@
                 case 'git':
                     $this->_installUsingGit( $_url, $_pluginName );
                     break;
-//                 case 'svn':
-//                     $this->_installUsingSvn( $_url );
-//                     break;
-//                 case 'http':
-//                 case 'https':
-//                     if( !$this->_installUsingSvn($_url) )
-//                     {
-//                         $this->_installUsingGit( $_url, $_pluginName );
-//                     }
-//                     break;
-//                 case 'ssh':
-//                     if( !$this->_installUsingGit($_url, $_pluginName) )
-//                     {
-//                         $this->_installUsingSvn( $_url );
-//                     }
-//                     break;
+                 case 'svn':
+                     $this->_installUsingSvn( $_url, $_pluginName );
+                     break;
+                 case 'http':
+                 case 'https':
+                     if( !$this->_installUsingSvn($_url, $_pluginName) )
+                     {
+                         $this->_installUsingGit( $_url, $_pluginName );
+                     }
+                     break;
+                 case 'ssh':
+                     if( !$this->_installUsingGit($_url, $_pluginName) )
+                     {
+                         $this->_installUsingSvn( $_url, $_pluginName );
+                     }
+                     break;
             }
         }
+
+        function _installUsingSvn( $_url, $_pluginName )
+        {
+            if( !App::import('Vendors', 'PluginManager.SvnHandler') )
+            {
+            }
+
+            $params = array( 'mainShell' => $this->mainShell );
+            $svnHandler = new SvnHandlerPM( $params );
+
+            $svnHandler->install( $_url, $_pluginName );
+
+            return true;
+        }
+
 
         function _installUsingGit( $_url, $_pluginName )
         {
@@ -220,7 +235,7 @@
             if( $method = $this->_getMethod($_nameOrUrl) )
             {
                 $url = $_nameOrUrl;
-                //$namePlugin = 
+                $pluginName = 'teste_svn';
             }
             else
             {
@@ -243,7 +258,7 @@
 
         function installDep( $_pluginName, $_url )
         {
-            if( !($method = $this->_getMethod$_nameOrUrl)) )
+            if( !($method = $this->_getMethod($_nameOrUrl)) )
             {
                 
             }
