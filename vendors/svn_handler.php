@@ -15,7 +15,7 @@
         {
             if( !shell_exec('svn --version 2>/dev/null') )
             {
-                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] FAIL : SVN nao suportado [/fg][/bg]\n", true) );
+                $this->mainShell->formattedOut( __d('plugin', "\n[bg=red][fg=black] FAIL : SVN nao suportado [/fg][/bg]\n", true) );
                 exit;
             }
         }
@@ -27,8 +27,8 @@
 
         function _export( $_url, $_pluginName )
         {
-            $this->mainShell->out( $_url );
             shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
+            return true;
         }
 
         function _getExternals( )
@@ -48,18 +48,38 @@
                 shell_exec( 'svn propset -q svn:externals . -F .externals-tmp' );
                 shell_exec( 'svn update' );
             }
+
+            return true;
         }
 
         function install( $_url, $_pluginName )
         {
             if( $this->_dotSvnPathExists() )
             {
-                $this->_externals( $_url, $_pluginName );
+                $this->mainShell->formattedOut( __d('plugin', '  -> adicionando external... ', true), false );
+
+                if( !$this->_externals($_url, $_pluginName) )
+                {
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    return false;
+                }
+
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
             else
             {
-                $this->_export( $_url, $_pluginName );
+                $this->mainShell->formattedOut( __d('plugin', '  -> importando repositorio... ', true), false );
+
+                if( !$this->_export($_url, $_pluginName) )
+                {
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    return false;
+                }
+
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
+
+            return true;
         }
  
     }

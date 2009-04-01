@@ -27,28 +27,47 @@
 
         function _clone( $_url, $_pluginName )
         {
-            $this->mainShell->out( '' );
             shell_exec( 'git clone '.$_url.' '.APP.'plugins/'.$_pluginName );
 
             //remover .git
+            return true;
         }
 
         function _submodule( $_url, $_pluginName  )
         {
-            $this->mainShell->out( '' );
             shell_exec( 'git submodule add '.$_url.' plugins/'.$_pluginName );
+
+            return true;
         }
 
         function install( $_url, $_pluginName )
         {
             if( $this->_dotGitPathExists() )
             {
-                $this->_submodule( $_url, $_pluginName );
+                $this->mainShell->formattedOut( __d('plugin', '  -> adicionando novo submodulo... ', true), false );
+
+                if( !$this->_submodule($_url, $_pluginName) )
+                {
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    return false;
+                }
+
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
             else
             {
-                $this->_clone( $_url, $_pluginName );
+                $this->mainShell->formattedOut( __d('plugin', '  -> clonando repositorio... ', true), false );
+
+                if( !$this->_clone($_url, $_pluginName) )
+                {
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    return false;
+                }
+
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
+
+            return true;
         }
     }
 

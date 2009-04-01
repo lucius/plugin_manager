@@ -112,6 +112,8 @@
 
         function _doInstall( $_method, $_url, $_pluginName )
         {
+            $this->mainShell->formattedOut( __d('plugin', '  -> selecionando modo de instalacao: ', true), false );
+
             switch( $_method )
             {
                 case 'git':
@@ -124,12 +126,14 @@
                  case 'https':
                      if( !$this->_installUsingSvn($_url, $_pluginName) )
                      {
-                         $this->_installUsingGit( $_url, $_pluginName );
+                        $this->mainShell->formattedOut( __d('plugin', 'Tentando instalar usando ', true), false );
+                        $this->_installUsingGit( $_url, $_pluginName );
                      }
                      break;
                  case 'ssh':
                      if( !$this->_installUsingGit($_url, $_pluginName) )
                      {
+                         $this->mainShell->formattedOut( __d('plugin', 'Tentando instalar usando ', true), false );
                          $this->_installUsingSvn( $_url, $_pluginName );
                      }
                      break;
@@ -138,31 +142,39 @@
 
         function _installUsingSvn( $_url, $_pluginName )
         {
+            $this->mainShell->formattedOut( __d('plugin', '[fg=yellow][u]SVN[/u][/fg]', true) );
+
             if( !App::import('Vendors', 'PluginManager.SvnHandler') )
             {
+                $this->formattedOut( __d('plugin', "Impossivel carregar [fg=red][u]SvnHandler[/u][/fg]\n", true) );
+                exit;
             }
 
             $params = array( 'mainShell' => $this->mainShell );
             $svnHandler = new SvnHandlerPM( $params );
 
-            $svnHandler->install( $_url, $_pluginName );
+            $status = $svnHandler->install( $_url, $_pluginName );
 
-            return true;
+            return $status;
         }
 
 
         function _installUsingGit( $_url, $_pluginName )
         {
+            $this->mainShell->formattedOut( __d('plugin', '[fg=yellow][u]GIT[/u][/fg]', true) );
+
             if( !App::import('Vendors', 'PluginManager.GitHandler') )
             {
+                $this->formattedOut( __d('plugin', "Impossivel carregar [fg=red][u]GitHandler[/u][/fg]\n", true) );
+                exit;
             }
 
             $params = array( 'mainShell' => $this->mainShell );
             $gitHandler = new GitHandlerPM( $params );
 
-            $gitHandler->install( $_url, $_pluginName );
+            $status = $gitHandler->install( $_url, $_pluginName );
 
-            return false;
+            return $status;
         }
 
         function listInstalledPlugins( )
@@ -232,6 +244,8 @@
 
         function installPlugin( $_nameOrUrl )
         {
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "Instalando [u]:plugin[/u]...", true), array('plugin'=>$_nameOrUrl)) );
+
             if( $method = $this->_getMethod($_nameOrUrl) )
             {
                 $url = $_nameOrUrl;
@@ -247,18 +261,22 @@
                 else
                 {
                     $pluginName = $_nameOrUrl;
-                    $url = $this->_findPluginUrl( $_nameOrUrl );
+                    $url = $this->_findPluginUrl($_nameOrUrl);
+                    if( !$url )
+                    {
+                        $this->mainShell->formattedOut( String::insert(__d('plugin', "O plugin [fg=red][u]:plugin[/u][/fg] nao foi encontrado.", true), array('plugin'=>$_nameOrUrl)) );
+                        exit;
+                    }
                     $method = $this->_getMethod($url);
                 }
             }
             $this->_doInstall( $method, $url, $pluginName );
-
             $this->_runInstallHook( $pluginName );
         }
 
         function installDep( $_pluginName, $_url )
         {
-            if( !($method = $this->_getMethod($_nameOrUrl)) )
+            if( !($method = $this->_getMethod($_url)) )
             {
                 
             }
@@ -270,13 +288,20 @@
 
         function _runInstallHook( $_pluginName )
         {
+            $this->mainShell->formattedOut( __d('plugin', "  -> verificando a existencia do hook de instalacao...", true) );
+
             if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
             {
+                $this->mainShell->formattedOut( __d('plugin', "\n    - carregando... ", true), false );
                 $className = Inflector::camelize($_pluginName.'_installer');
                 if( !App::import('Vendors', $className) )
                 {
-
+                    $this->formattedOut( __d('plugin', "[fg=black][bg=red] FAIL [/bg][/fg]", true) );
+                    exit;
                 }
+
+                $this->formattedOut( __d('plugin', "[fg=black][bg=green]  OK  [/bg][/fg]", true) );
+                $this->mainShell->formattedOut( String::insert(__d('plugin', "  -> executando hook de instalacao...", true), array('plugin'=>$_nameOrUrl)) );
 
                 $installer = new $className( $this->mainShell );
  
@@ -284,6 +309,10 @@
                 {
                     $installer->install( );
                 }
+            }
+            else
+            {
+                $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe \n ", true) );
             }
         }
     }
