@@ -253,7 +253,7 @@
             }
             $this->_doInstall( $method, $url, $pluginName );
 
-            $this->_execInstallScript( $pluginName );
+            $this->_runInstallHook( $pluginName );
         }
 
         function installDep( $_pluginName, $_url )
@@ -265,10 +265,10 @@
 
             $this->_doInstall( $method, $url, $pluginName );
 
-            $this->_execInstallScript( $pluginName );
+            $this->_runInstallHook( $pluginName );
         }
 
-        function _execInstallScript( $_pluginName )
+        function _runInstallHook( $_pluginName )
         {
             if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
             {

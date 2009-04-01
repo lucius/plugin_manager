@@ -28,20 +28,33 @@
         function _export( $_url, $_pluginName )
         {
             $this->mainShell->out( $_url );
-            shell_exec( 'svn export '.$_url.' '.APP.'plugins/'.$_pluginName );
+            shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
         }
 
-/*        function _externals( $_url, $_pluginName  )
+        function _getExternals( )
+        {
+            return trim(shell_exec('svn propget svn:externals .') );
+        }
+
+        function _externals( $_url, $_pluginName  )
         {
             $this->mainShell->out( '' );
-            shell_exec( 'svn propset -q svn:externals -F ' );
-        }*/
+
+            $externals = $this->_getExternals( );
+            $externals .= "\n"."plugins".DS."$_pluginName $_url";
+
+            if( file_put_contents('.externals-tmp', $externals) !== false )
+            {
+                shell_exec( 'svn propset -q svn:externals . -F .externals-tmp' );
+                shell_exec( 'svn update' );
+            }
+        }
 
         function install( $_url, $_pluginName )
         {
             if( $this->_dotSvnPathExists() )
             {
-//                $this->_externals( $_url, $_pluginName );
+                $this->_externals( $_url, $_pluginName );
             }
             else
             {
