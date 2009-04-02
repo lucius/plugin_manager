@@ -186,7 +186,7 @@
             if( file_put_contents($filePath, $_url) === false )
             {
                 $this->mainShell->formattedOut( __d('plugin',
-"  -> [fg=black][bg=black] ERRO [/bg][/fg] salvando .url file
+"  -> [fg=black][bg=black] ERRO [/bg][/fg] salvando arquivo .url
      nao sera possivel realizar a atualizacao do plugin atraves
      do plugin_manager.", true) );
             }
