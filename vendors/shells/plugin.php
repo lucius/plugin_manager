@@ -28,7 +28,6 @@
             if( empty($this->args) )
             {
                 $this->formattedOut( __d('plugin', 'Voce precisa especifiar o que deseja fazer...', true) );
-                $this->out( '' );
 
                 $this->_listaOpcoesDisponiveis( );
 
@@ -74,52 +73,42 @@
 
         function _listaOpcoesDisponiveis( )
         {
-            $this->formattedOut( __d('plugin', 'Opcoes disponiveis:', true) );
-            $this->out( '' );
+            $this->formattedOut( __d('plugin', "
+Opcoes disponiveis:
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]add-rep[/fg] [fg=green]url_repositorio[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Adiciona um repositorio de busca', true) );
-            $this->out( '' );
+  [fg=yellow]add-rep[/fg] [fg=green]url_repositorio[/fg]
+    Adiciona um repositorio de busca
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]rem-rep[/fg] [fg=green]url_repositorio[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Remove um repositorio de busca', true) );
-            $this->out( '' );
+  [fg=yellow]rem-rep[/fg] [fg=green]url_repositorio[/fg]
+    Remove um repositorio de busca
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]list-rep[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Lista os repositorios disponiveis', true) );
-            $this->out( '' );
+  [fg=yellow]list-rep[/fg]
+    Lista os repositorios disponiveis
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]list-rep[/fg] [fg=green]url_repositorio[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Lista os plugins disponiveis no repositorio especificado', true) );
-            $this->out( '' );
+  [fg=yellow]list-rep[/fg] [fg=green]url_repositorio[/fg]
+    Lista os plugins disponiveis no repositorio especificado
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Busca um plugin na lista de repositorios disponiveis', true) );
-            $this->out( '' );
-            
-            $this->formattedOut( __d('plugin', '  [fg=yellow]list[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Lista os plugins instalados atualmente', true) );
-            $this->out( '' );
+  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg]
+    Busca um plugin na lista de repositorios disponiveis
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Instala o plugin especificado na url, executando o script', true) );
-            $this->formattedOut( __d('plugin', '    de instalacao, se existir', true) );
-            $this->out( '' );
+  [fg=yellow]list[/fg]
+    Lista os plugins instalados atualmente
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]uninstall[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Remove o plugin especificado, executando o script de', true) );
-            $this->formattedOut( __d('plugin', '    desinstalacao se existir', true) );
-            $this->out( '' );
+  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg]
+    Instala o plugin especificado na url, executando o script
+    de instalacao, se existir
 
-            $this->formattedOut( __d('plugin', '  [fg=yellow]update[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Verifica se existem atualizacoes disponiveis para o plugin', true) );
-            $this->formattedOut( __d('plugin', '    especificado e as instala', true) );
-            $this->out( '' );
-            
-            $this->formattedOut( __d('plugin', '  [fg=yellow]-proxy[/fg] [fg=green]username:password@endereco.do.proxy:porta[/fg]', true) );
-            $this->formattedOut( __d('plugin', '    Utiliza as configuracoes do proxy para realizar as operacoes', true) );
-            $this->formattedOut( __d('plugin', '    desejadas', true) );
-            $this->out( '' );
+  [fg=yellow]uninstall[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]
+    Remove o plugin especificado, executando o script de
+    desinstalacao se existir
+
+  [fg=yellow]update[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]
+    Verifica se existem atualizacoes disponiveis para o plugin
+    especificado e as instala
+
+  [fg=yellow]-proxy[/fg] [fg=green]username:password@endereco.do.proxy:porta[/fg]
+    Utiliza as configuracoes do proxy para realizar as operacoes
+    desejadas", true) );
         }
 
         function _importResource( $_resource, $_constructorParams )
@@ -165,7 +154,7 @@
             }
             else
             {
-                $this->formattedOut( __d('plugin', '[bg=red][fg=black] FAIL [/fg][/bg] Opcao Invalida', true) );
+                $this->formattedOut( __d('plugin', '[bg=red][fg=black] ERRO [/fg][/bg] Opcao Invalida', true) );
 
                 $this->out( '' );
                 $this->hr( );
