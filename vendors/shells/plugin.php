@@ -45,39 +45,44 @@
             switch( $this->args[0] )
             {
                 case 'add-rep':
-                    $this->_addRep( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_addRep( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'rem-rep':
-                    $this->_remRep( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_remRep( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'list-rep':
                     ( isset($this->args[1]) ) ? $this->_listRep( $this->args[1] ) : $this->_listRep( );
                     break;
                 case 'find':
-                    $this->_find( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_find( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'list':
                     $this->_list( );
                     break;
                 case 'install':
-                    $this->_install( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_install( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'uninstall':
-                    $this->_uninstall( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_uninstall( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'update':
-                    $this->_update( $this->args[1] );
+                    ( isset($this->args[1]) ) ? $this->_update( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 default:
                     $this->formattedOut( __d('plugin', '[bg=red][fg=white] OPCAO INVALIDA [/fg][/bg]', true) );
                     $this->out( '' );
-                    $this->_listaOpcoesDisponiveis( );
+                    $this->_listAvaliableOptions( );
                     break;
             }
             $this->hr( );
         }
 
-        function _listaOpcoesDisponiveis( )
+        function _missingParameter( )
+        {
+            $this->formattedOut( __d('plugin', '[bg=red][fg=black] ERRO [/fg][/bg] E necessario um paramentro para executar esta opcao', true) );
+        }
+
+        function _listAvaliableOptions( )
         {
             $this->formattedOut( __d('plugin', "REP_OPTIONS", true), false );
             $this->formattedOut( __d('plugin', "PLUGIN_OPTIONS", true) );

@@ -27,47 +27,70 @@
 
         function _clone( $_url, $_pluginName )
         {
-            shell_exec( 'git clone '.$_url.' '.APP.'plugins/'.$_pluginName );
+            $return = shell_exec( 'git clone '.$_url.' '.APP.'plugins/'.$_pluginName.' 2>&1' );
+
+            $pattern = "/.*fatal.*/i";
+            $found;
+            preg_match_all( $pattern, $return, $found);
 
             //remover .git
-            return true;
+            return $found[0];
         }
 
         function _submodule( $_url, $_pluginName  )
         {
-            shell_exec( 'git submodule add '.$_url.' plugins/'.$_pluginName );
+            $return = shell_exec( 'git submodule add '.$_url.' plugins/'.$_pluginName.' 2>&1' );
 
-            return true;
+            $pattern = "/.*fatal.*/i";
+            $found = array();
+            preg_match_all( $pattern, $return, $found);
+
+            return $found[0];
         }
 
         function install( $_url, $_pluginName )
         {
+            $return = true;
+
             if( $this->_dotGitPathExists() )
             {
                 $this->mainShell->formattedOut( __d('plugin', '  -> adicionando novo submodulo... ', true), false );
 
-                if( !$this->_submodule($_url, $_pluginName) )
+                $errors = $this->_submodule($_url, $_pluginName);
+                if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-                    return false;
-                }
 
-                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
+                    $return = false;
+                }
             }
             else
             {
                 $this->mainShell->formattedOut( __d('plugin', '  -> clonando repositorio... ', true), false );
 
-                if( !$this->_clone($_url, $_pluginName) )
+                $errors = $this->_clone($_url, $_pluginName);
+                if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-                    return false;
-                }
 
-                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
+                    $return = false;
+                }
             }
 
-            return true;
+            if ($return)
+            {
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
+            }
+            else
+            {
+                foreach ( $errors as $error )
+                {
+                    $this->mainShell->formattedOut( "    - $error" );
+                }
+            }
+
+
+            return $return;
         }
     }
 
