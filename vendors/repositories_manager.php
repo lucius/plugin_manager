@@ -222,14 +222,14 @@
 
         function _getUrlContent( $_url, $_proxy = false )
         {
-            if( function_exists('curl_init') )
+            if( !function_exists('curl_init') )
             {
                 $this->mainShell->formattedOut( __d('plugin',
-"A biblioteca PHP CURL nao esta habilitada.
+"\nA biblioteca [fg=black][bg=red]PHP CURL[/bg][/fg] nao esta habilitada.
 Descomente a linha com o conteudo
-[fg=red]  -[u]extension=php_curl.so[/u][/fg] ou
-[fg=red]  -[u]extension=php_curl.dll[/u][/fg]
-no php.ini\n" );
+[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou
+[fg=red]  - [u]extension=php_curl.dll[/u][/fg]
+no php.ini\n", true ) );
 
                 $this->mainShell->hr( );
 

@@ -15,6 +15,12 @@
 
         function _initialize( )
         {
+            Configure::write( 'localePaths', am(Configure::getInstance()->localePaths,dirname(dirname(dirname(__FILE__))).DS.'locale'.DS) );
+            if( !defined('DEFAULT_LANGUAGE') )
+            {
+                define('DEFAULT_LANGUAGE', 'eng');
+            }
+
             if( !empty($this->params['proxy']) )
             {
                 $this->proxy = $this->params['proxy'];
@@ -73,42 +79,8 @@
 
         function _listaOpcoesDisponiveis( )
         {
-            $this->formattedOut( __d('plugin', "
-Opcoes disponiveis:
-
-  [fg=yellow]add-rep[/fg] [fg=green]url_repositorio[/fg]
-    Adiciona um repositorio de busca
-
-  [fg=yellow]rem-rep[/fg] [fg=green]url_repositorio[/fg]
-    Remove um repositorio de busca
-
-  [fg=yellow]list-rep[/fg]
-    Lista os repositorios disponiveis
-
-  [fg=yellow]list-rep[/fg] [fg=green]url_repositorio[/fg]
-    Lista os plugins disponiveis no repositorio especificado
-
-  [fg=yellow]find[/fg] [fg=green]nome_do_plugin[/fg]
-    Busca um plugin na lista de repositorios disponiveis
-
-  [fg=yellow]list[/fg]
-    Lista os plugins instalados atualmente
-
-  [fg=yellow]install[/fg] [fg=green]url_plugin[/fg]
-    Instala o plugin especificado na url, executando o script
-    de instalacao, se existir
-
-  [fg=yellow]uninstall[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]
-    Remove o plugin especificado, executando o script de
-    desinstalacao se existir
-
-  [fg=yellow]update[/fg] [fg=green]nome_plugin[/fg] [fg=red](Indisponivel)[/fg]
-    Verifica se existem atualizacoes disponiveis para o plugin
-    especificado e as instala
-
-  [fg=yellow]-proxy[/fg] [fg=green]username:password@endereco.do.proxy:porta[/fg]
-    Utiliza as configuracoes do proxy para realizar as operacoes
-    desejadas", true) );
+            $this->formattedOut( __d('plugin', "REP_OPTIONS", true), false );
+            $this->formattedOut( __d('plugin', "PLUGIN_OPTIONS", true) );
         }
 
         function _importResource( $_resource, $_constructorParams )

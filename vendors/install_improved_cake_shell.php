@@ -27,7 +27,7 @@
         function install( )
         {
             $this->out( __d('plugin',
-"Instalando dependencias necessarias para o funcionamento do gerenciador de Plugins...
+"Instalando dependencias necessarias para o funcionamento do Plugin Manager...
   -> Instalando: Improved Cake Shell...", true) );
 
             $comando = 'git clone git://github.com/lucius/improved_cake_shell.git '.APP.'plugins/improved_cake_shell';

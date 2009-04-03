@@ -186,9 +186,9 @@
             if( file_put_contents($filePath, $_url) === false )
             {
                 $this->mainShell->formattedOut( __d('plugin',
-"  -> [fg=black][bg=black] ERRO [/bg][/fg] salvando arquivo .url
-     nao sera possivel realizar a atualizacao do plugin atraves
-     do plugin_manager.", true) );
+"  -> [fg=black][bg=red] ERRO [/bg][/fg] salvando arquivo .url
+    - nao sera possivel realizar a atualizacao do plugin atraves
+      do plugin_manager.", true) );
             }
         }
 
@@ -219,7 +219,7 @@
             }
             else
             {
-                $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe \n ", true) );
+                $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe\n", true) );
             }
         }
 
