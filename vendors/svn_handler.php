@@ -27,13 +27,19 @@
 
         function _export( $_url, $_pluginName )
         {
-            shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
-            return true;
+            $return = shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
+
+            $pattern = "/^svn.*/i";
+            $found;
+            preg_match_all( $pattern, $return, $found);
+
+            //remover .git
+            return $found[0];
         }
 
         function _getExternals( )
         {
-            return trim(shell_exec('svn propget svn:externals .') );
+            return trim(shell_exec('svn propget svn:externals . 2>&1') );
         }
 
         function _externals( $_url, $_pluginName  )
@@ -45,11 +51,16 @@
 
             if( file_put_contents('.externals-tmp', $externals) !== false )
             {
-                shell_exec( 'svn propset -q svn:externals . -F .externals-tmp' );
+                $return = shell_exec( 'svn propset -q svn:externals . -F .externals-tmp 2>&1' );
                 shell_exec( 'svn update' );
+                unlink('.externals-tmp');
             }
 
-            return true;
+            $pattern = "/^svn.*/i";
+            $found;
+            preg_match_all( $pattern, $return, $found);
+
+            return $found[0];
         }
 
         function install( $_url, $_pluginName )

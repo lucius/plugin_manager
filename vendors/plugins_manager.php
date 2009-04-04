@@ -117,6 +117,7 @@
             switch( $_method )
             {
                 case 'git':
+                case 'ssh':
                     $status = $this->_installUsingGit( $_url, $_pluginName );
                     break;
                 case 'svn':
@@ -130,13 +131,6 @@
                         $status = $this->_installUsingGit( $_url, $_pluginName );
                     }
                      break;
-                case 'ssh':
-                    if( !$status = $this->_installUsingGit($_url, $_pluginName) )
-                    {
-                        $this->mainShell->formattedOut( __d('plugin', 'Tentando instalar usando ', true), false );
-                        $status = $this->_installUsingSvn( $_url, $_pluginName );
-                    }
-                    break;
             }
 
             return $status;
@@ -183,12 +177,18 @@
         {
             $filePath = APP."plugins/$_pluginName/.url-$_method";
 
-            if( file_put_contents($filePath, $_url) === false )
+            $this->mainShell->formattedOut( __d('plugin', "  -> salvando arquivo .url... ", true), false );
+
+            if( !file_put_contents($filePath, $_url) === false )
             {
                 $this->mainShell->formattedOut( __d('plugin',
-"  -> [fg=black][bg=red] ERRO [/bg][/fg] salvando arquivo .url
+"[fg=black][bg=red] ERRO [/bg][/fg]
     - nao sera possivel realizar a atualizacao do plugin atraves
       do plugin_manager.", true) );
+            }
+            else
+            {
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK   [/bg][/fg]", true) );
             }
         }
 
@@ -322,9 +322,8 @@
             if( $status )
             {
                 $this->_saveUrlFile( $method, $url, $pluginName );
+                $this->_runInstallHook( $pluginName );
             }
-
-            $this->_runInstallHook( $pluginName );
         }
 
         function installDep( $_pluginName, $_url )
