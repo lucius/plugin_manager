@@ -61,6 +61,11 @@
             $found = array();
             preg_match_all( $pattern, $return, $found);
 
+            if( empty($found[0]) )
+            {
+                shell_exec( 'git submodule init && git submodule update');
+            }
+
             return $found[0];
         }
 

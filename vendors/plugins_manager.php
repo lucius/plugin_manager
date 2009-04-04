@@ -327,21 +327,21 @@
             {
                 if( $this->_isInstalled($_nameOrUrl) )
                 {
-//                    $this->update( $_nameOrUrl );
+                    $this->update( $_nameOrUrl );
                     exit;
                 }
                 else
                 {
                     $url = $_nameOrUrl;
                     // @TODO 
-                    $pluginName = $this->_getName( );
+//                    $pluginName = $this->_getName( );
                 }
             }
             else
             {
                 if( $this->_isInstalled($_nameOrUrl) )
                 {
-//                    $this->update( $_nameOrUrl );
+                    $this->update( $_nameOrUrl );
                     exit;
                 }
                 else
@@ -434,6 +434,19 @@
                 $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=red] ERRO [/bg][/fg]", true) );
                 $this->mainShell->formattedOut( __d('plugin',"  -> O plugin nao existe ou nao possui uma url para atualizacao.", true) );
 
+                exit;
+            }
+
+            if( file_exists(APP.'plugins/'.$_pluginName.'/.git') )
+            {
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]", true) );
+                $return = shell_exec('git submodule init && git submodule update');
+                exit;
+            }
+            elseif( preg_match('/plugins\/'.$_pluginName.'/', trim(shell_exec('svn propget svn:externals .'))) )
+            {
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]", true) );
+                $return = shell_exec('svn update');
                 exit;
             }
 
