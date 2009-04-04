@@ -1,0 +1,276 @@
+# translation of default.po to
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# No version information was available in the source files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: default\n"
+"POT-Creation-Date: 2009-04-02 16:33-0300\n"
+"PO-Revision-Date: 2009-04-02 16:40-0300\n"
+"Last-Translator: \n"
+"Language-Team:  <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: /vendors/git_handler.php:18
+msgid "[bg=red][fg=black] ERRO : GIT nao suportado [/fg][/bg]\n"
+msgstr "[bg=red][fg=black] FAIL : GIT unsupported [/fg][/bg]\n"
+
+#: /vendors/git_handler.php:47
+msgid "  -> adicionando novo submodulo... "
+msgstr "  -> adding new submodule... "
+
+#: /vendors/git_handler.php:51;63
+#: /vendors/plugins_manager.php:205
+#: /vendors/svn_handler.php:63;75
+msgid "[fg=black][bg=red] ERRO [/bg][/fg]"
+msgstr "[fg=black][bg=red] FAIL [/bg][/fg]"
+
+#: /vendors/git_handler.php:55;67
+#: /vendors/installer.php:24
+#: /vendors/svn_handler.php:67;79
+msgid "[fg=black][bg=green]  OK  [/bg][/fg]"
+msgstr "[fg=black][bg=green]  OK  [/bg][/fg]"
+
+#: /vendors/git_handler.php:59
+msgid "  -> clonando repositorio... "
+msgstr "  -> clone repository... "
+
+#: /vendors/install_improved_cake_shell.php:29
+msgid "Instalando dependencias necessarias para o funcionamento do Plugin Manager...\n  -> Instalando: Improved Cake Shell..."
+msgstr "Installing necessary dependencies for the functioning of Plugins Manager ...\n  -> Installing: Improved Shell Cake ..."
+
+#: /vendors/install_improved_cake_shell.php:41
+msgid "    - Instalado com sucesso!"
+msgstr "    - Installed successfully!"
+
+#: /vendors/install_improved_cake_shell.php:45
+msgid "    - Falha na instalacao!"
+msgstr "    - Installation failed!"
+
+#: /vendors/installer.php:20
+msgid "Verificando a existencia de dependencias..."
+msgstr "Looking for dependencies..."
+
+#: /vendors/plugins_manager.php:18
+msgid "Impossivel carregar [fg=red][u]Core.Folder[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]Core.Folder[/u][/fg]\n"
+
+#: /vendors/plugins_manager.php:50
+msgid "Impossivel carregar [fg=red][u]PluginManager.RepositoriesManager[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]PluginManager.RepositoriesManager[/u][/fg]\n"
+
+#: /vendors/plugins_manager.php:115
+msgid "  -> selecionando modo de instalacao: "
+msgstr "  -> selecting installation method: "
+
+#: /vendors/plugins_manager.php:129;136
+msgid "Tentando instalar usando "
+msgstr "Trying to install using "
+
+#: /vendors/plugins_manager.php:147
+msgid "[fg=yellow][u]SVN[/u][/fg]"
+msgstr "[fg=yellow][u]SVN[/u][/fg]"
+
+#: /vendors/plugins_manager.php:151
+msgid "Impossivel carregar [fg=red][u]SvnHandler[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]SvnHandler[/u][/fg]\n"
+
+#: /vendors/plugins_manager.php:166
+msgid "[fg=yellow][u]GIT[/u][/fg]"
+msgstr "[fg=yellow][u]GIT[/u][/fg]"
+
+#: /vendors/plugins_manager.php:170
+msgid "Impossivel carregar [fg=red][u]GitHandler[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]GitHandler[/u][/fg]\n"
+
+#: /vendors/plugins_manager.php:188
+msgid "  -> [fg=black][bg=red] ERRO [/bg][/fg] salvando arquivo .url\n    - nao sera possivel realizar a atualizacao do plugin atraves\n       do plugin_manager."
+msgstr "  -> [fg=black][bg=red] FAIL [/bg][/fg] saving .url file\n    - you cannot perform the update of the plugin through the\n      plugin_manager."
+
+#: /vendors/plugins_manager.php:197
+msgid "  -> verificando a existencia do hook de instalacao..."
+msgstr "  -> verifying the existence of installation hook..."
+
+#: /vendors/plugins_manager.php:201
+msgid "\n    - carregando... "
+msgstr "\n    - loading... "
+
+#: /vendors/plugins_manager.php:209
+msgid "[fg=black][bg=green]  OK  [/bg][/fg]\n  -> executando hook de instalacao..."
+msgstr "[fg=black][bg=green]  OK  [/bg][/fg]\n  -> executing install hook..."
+
+#: /vendors/plugins_manager.php:222
+msgid "    - O hook nao existe\n"
+msgstr "    - Hook not found\n"
+
+#: /vendors/plugins_manager.php:228
+msgid "Listando plugins instalados em [u]:app[/u]:\n"
+msgstr "Listing installed plugins on [u]:app[/u]:\n"
+
+##: /vendors/plugins_manager.php:234
+#msgid "  [fg=green]:plugin"
+#msgstr "  [fg=green]:plugin"
+
+##: /vendors/plugins_manager.php:238
+#msgid " *[/fg]"
+#msgstr " *[/fg]"
+
+##: /vendors/plugins_manager.php:242
+#msgid "[/fg]\n"
+#msgstr "[/fg]\n"
+
+#: /vendors/plugins_manager.php:248
+msgid "* Plugins que podem ser atualizados utilizando o [u]Plugin Manager[/u]"
+msgstr "* Plugins can be updated using the [u]Plugin Manager[/u]"
+
+#: /vendors/plugins_manager.php:253
+msgid "Buscando plugins: [u]:pattern[/u]\n"
+msgstr "Looking for plugins: [u]:pattern[/u]\n"
+
+##: /vendors/plugins_manager.php:263
+#msgid "[fg=green]    :pluginName"
+#msgstr "[fg=green]    :pluginName"
+
+##: /vendors/plugins_manager.php:267
+##: /vendors/repositories_manager.php:166
+#msgid " *[/fg]\n"
+#msgstr " *[/fg]\n"
+
+##: /vendors/plugins_manager.php:271
+##: /vendors/repositories_manager.php:170
+#msgid "[/fg]\n      :pluginUrl\n"
+#msgstr "[/fg]\n      :pluginUrl\n"
+
+#: /vendors/plugins_manager.php:282
+msgid "Nao foram encontrados plugins\n"
+msgstr "Plugins cannot be found\n"
+
+#: /vendors/plugins_manager.php:288
+msgid "* Plugins ja instalados"
+msgstr "* Installed plugins"
+
+#: /vendors/plugins_manager.php:293
+msgid "Instalando [u]:plugin[/u]..."
+msgstr "Installing [u]:plugin[/u]..."
+
+#: /vendors/plugins_manager.php:313
+msgid "O plugin [fg=red][u]:plugin[/u][/fg] nao foi encontrado."
+msgstr "[fg=red][u]:plugin[/u][/fg] not found."
+
+#: /vendors/plugins_manager.php:334
+msgid "A URL '[fg=red][u]:url[/u][/fg]' nao parece ser valida."
+msgstr "The URL '[fg=red][u]:url[/u][/fg]' is not seems to be valid."
+
+#: /vendors/repositories_manager.php:24
+msgid " [fg=red]O arquivo de repositorios nao pode ser encontrado!\n O local correto do arquivo e :repsPath [/fg]\n"
+msgstr "[fg=red]The repositories file cannot be found!\n The right path is :repsPath [/fg]\n"
+
+#: /vendors/repositories_manager.php:76
+msgid "Inserindo repositorio [u]:rep_url[/u] [/fg]"
+msgstr "Inserting repository [u]:rep_url[/u] [/fg]"
+
+#: /vendors/repositories_manager.php:82
+msgid "[b] ... [/b]\n  -> O repositorio ja existe\n"
+msgstr "[b] ... [/b]\n  -> The repository already exists\n"
+
+#: /vendors/repositories_manager.php:95;130
+msgid "[bg=green][fg=black]  OK  [/fg][/bg]"
+msgstr "[bg=green][fg=black]  OK  [/fg][/bg]"
+
+#: /vendors/repositories_manager.php:99;134
+msgid "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O arquivo nao pode ser acessado"
+msgstr "[bg=red][fg=black] FAIL [/fg][/bg]\n  -> The file cannot be accessed"
+
+#: /vendors/repositories_manager.php:106
+msgid "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O parametro a ser adicionado nao parece ser uma URL"
+msgstr "[bg=red][fg=black] FAIL [/fg][/bg]\n  -> The parameter to be added does not seem to be a URL"
+
+#: /vendors/repositories_manager.php:114
+msgid "[fg=red]Excluindo[/fg] repositorio [u]:rep_url[/u] [/fg]"
+msgstr "[fg=red]Excluding[/fg] repository [u]:rep_url[/u] [/fg]"
+
+#: /vendors/repositories_manager.php:118
+msgid "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O repositorio nao existe"
+msgstr "[bg=red][fg=black] FAIL [/fg][/bg]\n  -> Repository not found"
+
+#: /vendors/repositories_manager.php:149
+msgid "Impossivel carregar [fg=red][u]PluginManager.PluginsManager[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]PluginManager.PluginsManager[/u][/fg]\n"
+
+#: /vendors/repositories_manager.php:155
+msgid "Listando plugins disponiveis em [u]:rep_url[/u]"
+msgstr "Listing avaliable plugins on [u]:rep_url[/u]"
+
+#: /vendors/repositories_manager.php:162
+msgid "[fg=green]    :pluginTitle"
+msgstr "[fg=green]    :pluginTitle"
+
+#: /vendors/repositories_manager.php:178
+msgid "Nao foram encontrados plugins no repositorio"
+msgstr "There are no plugins on repository"
+
+#: /vendors/repositories_manager.php:188
+msgid "\n[fg=black][bg=red] ERRO [/bg][/fg] :erro\n       Se voce usa proxy para se conectar a internet, tente usar a opcao\n       \"-proxy username:password@endereco.do.proxy:porta\"\n"
+msgstr "\n[fg=black][bg=red] FAIL [/bg][/fg] :erro\n       If you use proxy to connect to Internet, try using the option\n       \"-proxy username:password@proxy.address:port\"\n"
+
+#: /vendors/repositories_manager.php:215
+msgid "[fg=black][bg=red] ERRO: :erro [/bg][/fg]"
+msgstr "[fg=black][bg=red] FAIL: :erro [/bg][/fg]"
+
+#: /vendors/repositories_manager.php:227
+msgid "\nA biblioteca [fg=black][bg=red]PHP CURL[/bg][/fg] nao esta habilitada.\nDescomente a linha com o conteudo\n[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou\n[fg=red]  - [u]extension=php_curl.dll[/u][/fg]\nno php.ini\n"
+msgstr "\nThe library [fg=black][bg=red]PHP CURL[/bg][/fg] is not enabled.\nUncomment the line with the content\n[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou\n[fg=red]  - [u]extension=php_curl.dll[/u][/fg]\non php.ini\n"
+
+#: /vendors/svn_handler.php:18
+msgid "\n[bg=red][fg=black] ERRO : SVN nao suportado [/fg][/bg]\n"
+msgstr "\n[bg=red][fg=black] FAIL : SVN unsupported [/fg][/bg]\n"
+
+#: /vendors/svn_handler.php:59
+msgid "  -> adicionando svn:external... "
+msgstr "  -> adding svn:external... "
+
+#: /vendors/svn_handler.php:71
+msgid "  -> importando repositorio... "
+msgstr "  -> importing repository... "
+
+#: /vendors/shells/plugin.php:30
+msgid "Voce precisa especifiar o que deseja fazer..."
+msgstr "You need to specify what you want to do..."
+
+#: /vendors/shells/plugin.php:66
+msgid "[bg=red][fg=white] OPCAO INVALIDA [/fg][/bg]"
+msgstr "[bg=red][fg=white] INVALID OPTION [/fg][/bg]"
+
+#: /vendors/shells/plugin.php:76
+msgid "REP_OPTIONS"
+msgstr "\nAvaliable Options:\n\n  [fg=yellow]add-rep[/fg] [fg=green]repository_url[/fg]\n    Add a search repository\n\n  [fg=yellow]rem-rep[/fg] [fg=green]repository_url[/fg]\n    Remove a search repository\n\n  [fg=yellow]list-rep[/fg]\n    List avaliable repositories\n\n  [fg=yellow]list-rep[/fg] [fg=green]repository_url[/fg]\n    List available plugins on specified repository\n\n  [fg=yellow]find[/fg] [fg=green]plugin_name[/fg]\n    Search a plugin on available repositories"
+
+#: /vendors/shells/plugin.php:77
+msgid "PLUGIN_OPTIONS"
+msgstr "\n\n  [fg=yellow]list[/fg]\n    List installed plugins\n\n  [fg=yellow]install[/fg] [fg=green]plugin_url | plugin_name[/fg]\n    Install the plugin specified in the url, running the installation\n    script, if exists\n\n  [fg=yellow]uninstall[/fg] [fg=green]plugin_name[/fg] [fg=red](Indisponivel)[/fg]\n    Uninstall the specified plugin, running the uninstall script,\n    if exists\n\n  [fg=yellow]update[/fg] [fg=green]plugin_name[/fg] [fg=red](Indisponivel)[/fg]\n    Checks if there are updates available for the specified plugin\n    and install\n\n  [fg=yellow]-proxy[/fg] [fg=green]username:password@proxy.address:port[/fg]\n    Uses the proxy settings to perform the desired operations"
+
+#: /vendors/shells/plugin.php:118
+msgid "Impossivel carregar [fg=red][u]:resource[/u][/fg]\n"
+msgstr "Unable to load [fg=red][u]:resource[/u][/fg]\n"
+
+#: /vendors/shells/plugin.php:142
+msgid "Selecione um Repositorio para listar"
+msgstr "Select a repository to list"
+
+#: /vendors/shells/plugin.php:157
+msgid "[bg=red][fg=black] ERRO [/fg][/bg] Opcao Invalida"
+msgstr "[bg=red][fg=black] FAIL [/fg][/bg] Invalid Option"
+
+##: /vendors/shells/plugin.php:173
+#msgid "[fg=green](:counter)[/fg]  [u]:rep_url[/u]"
+#msgstr "[fg=green](:counter)[/fg]  [u]:rep_url[/u]"
+
+#: /vendors/shells/plugin.php:186
+msgid "Nao existem repositorios para serem listados\n"
+msgstr "There is no repository to be listed\n"
+

@@ -15,7 +15,7 @@
         {
             if( !shell_exec('git --version 2>/dev/null') )
             {
-                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] FAIL : GIT nao suportado [/fg][/bg]\n", true) );
+                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO : GIT nao suportado [/fg][/bg]\n", true) );
                 exit;
             }
         }
@@ -48,7 +48,7 @@
 
                 if( !$this->_submodule($_url, $_pluginName) )
                 {
-                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
                     return false;
                 }
 
@@ -60,7 +60,7 @@
 
                 if( !$this->_clone($_url, $_pluginName) )
                 {
-                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
                     return false;
                 }
 

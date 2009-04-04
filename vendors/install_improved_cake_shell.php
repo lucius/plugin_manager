@@ -26,11 +26,12 @@
          */
         function install( )
         {
-            $this->out( __d('plugin', 'Instalando dependencias necessarias para o funcionamento do gerenciador de Plugins...', true) );
-            $this->out( __d('plugin', '  -> Instalando: Improved Cake Shell...', true) );
+            $this->out( __d('plugin',
+"Instalando dependencias necessarias para o funcionamento do Plugin Manager...
+  -> Instalando: Improved Cake Shell...", true) );
 
             $comando = 'git clone git://github.com/lucius/improved_cake_shell.git '.APP.'plugins/improved_cake_shell';
-            $this->out( __d('plugin', '  -> Executando: '.$comando, true) );
+            $this->out( __d('plugin', '    - Executando: '.$comando, true) );
 
             $this->out( __d('plugin', '     '.shell_exec($comando), true) );
 

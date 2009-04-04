@@ -15,7 +15,7 @@
         {
             if( !shell_exec('svn --version 2>/dev/null') )
             {
-                $this->mainShell->formattedOut( __d('plugin', "\n[bg=red][fg=black] FAIL : SVN nao suportado [/fg][/bg]\n", true) );
+                $this->mainShell->formattedOut( __d('plugin', "\n[bg=red][fg=black] ERRO : SVN nao suportado [/fg][/bg]\n", true) );
                 exit;
             }
         }
@@ -56,11 +56,11 @@
         {
             if( $this->_dotSvnPathExists() )
             {
-                $this->mainShell->formattedOut( __d('plugin', '  -> adicionando external... ', true), false );
+                $this->mainShell->formattedOut( __d('plugin', '  -> adicionando svn:external... ', true), false );
 
                 if( !$this->_externals($_url, $_pluginName) )
                 {
-                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
                     return false;
                 }
 
@@ -72,7 +72,7 @@
 
                 if( !$this->_export($_url, $_pluginName) )
                 {
-                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] FAIL [/bg][/fg]', true) );
+                    $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
                     return false;
                 }
 

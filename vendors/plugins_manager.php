@@ -185,9 +185,10 @@
 
             if( file_put_contents($filePath, $_url) === false )
             {
-                $this->mainShell->formattedOut( __d('plugin', "  -> [fg=black][bg=black] ERRO [/bg][/fg] salvando .url file", true) );
-                $this->mainShell->formattedOut( __d('plugin', "     nao sera possivel realizar a atualizacao do plugin atraves", true) );
-                $this->mainShell->formattedOut( __d('plugin', "     do plugin_manager.", true) );
+                $this->mainShell->formattedOut( __d('plugin',
+"  -> [fg=black][bg=red] ERRO [/bg][/fg] salvando arquivo .url
+    - nao sera possivel realizar a atualizacao do plugin atraves
+      do plugin_manager.", true) );
             }
         }
 
@@ -201,12 +202,13 @@
                 $className = Inflector::camelize($_pluginName.'_installer');
                 if( !App::import('Vendors', $className) )
                 {
-                    $this->formattedOut( __d('plugin', "[fg=black][bg=red] FAIL [/bg][/fg]", true) );
+                    $this->formattedOut( __d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true) );
                     exit;
                 }
 
-                $this->formattedOut( __d('plugin', "[fg=black][bg=green]  OK  [/bg][/fg]", true) );
-                $this->mainShell->formattedOut( String::insert(__d('plugin', "  -> executando hook de instalacao...", true), array('plugin'=>$_nameOrUrl)) );
+                $this->mainShell->formattedOut( __d('plugin',
+"[fg=black][bg=green]  OK  [/bg][/fg]
+  -> executando hook de instalacao...", true) );
 
                 $installer = new $className( $this->mainShell );
  
@@ -217,7 +219,7 @@
             }
             else
             {
-                $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe \n ", true) );
+                $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe\n", true) );
             }
         }
 
