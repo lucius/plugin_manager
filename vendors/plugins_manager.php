@@ -125,7 +125,7 @@
                 case 'https':
                     if( !$status = $this->_installUsingSvn($_url, $_pluginName) )
                     {
-                        $this->mainShell->formattedOut( __d('plugin', 'Tentando instalar usando ', true), false );
+                        $this->mainShell->formattedOut( __d('plugin', '  -> Tentando instalar usando ', true), false );
                         $status = $this->_installUsingGit( $_url, $_pluginName );
                     }
                      break;
@@ -193,11 +193,12 @@
 
             if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
             {
-                $this->mainShell->formattedOut( __d('plugin', "\n    - carregando... ", true), false );
+                $this->mainShell->formattedOut( __d('plugin', "    - carregando... ", true), false );
                 $className = Inflector::camelize($_pluginName.'_installer');
-                if( !App::import('Vendors', $className) )
+                //                if( !App::import('Vendors', Inflector::camelize($_pluginName).'.'.$className) )
+                if( !include(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
                 {
-                    $this->formattedOut( __d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true) );
+                    $this->mainShell->formattedOut( __d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true) );
                     exit;
                 }
 
@@ -286,7 +287,7 @@
             {
                 $url = $_nameOrUrl;
                 // @TODO 
-                $pluginName = 'teste_svn';
+                $pluginName = 'teste_capeta';
             }
             else
             {
@@ -322,15 +323,16 @@
 
             if( !($method = $this->_getMethod($_url)) )
             {
-                $this->mainShell->formattedOut( String::insert(__d('plugin', "A URL '[fg=red][u]:url[/u][/fg]' nao parece ser valida.", true), array('url'=>$url)) );
+                $this->mainShell->formattedOut( String::insert(__d('plugin', "A URL '[fg=red][u]:url[/u][/fg]' nao parece ser valida.", true), array('url'=>$_url)) );
             }
 
-            $status = $this->_doInstall( $method, $url, $pluginName );
+            $status = $this->_doInstall( $method, $_url, $_pluginName );
             if( $status )
             {
-                $this->_saveUrlFile( $url, $pluginName );
-                $this->_runInstallHook( $pluginName );
+                $this->_saveUrlFile( $_url, $_pluginName );
+                $this->_runInstallHook( $_pluginName );
             }
+            return $status;
         }
     }
 

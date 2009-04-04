@@ -215,7 +215,11 @@
                 CURLOPT_HEADER => true,
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_RETURNTRANSFER => true
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FRESH_CONNECT => true,
+                CURLOPT_HTTPHEADER => array("Pragma: "),
+                CURLOPT_DNS_USE_GLOBAL_CACHE => false,
+                CURLOPT_DNS_CACHE_TIMEOUT => 1
             );
         
             $cu = curl_init( );

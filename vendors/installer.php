@@ -2,9 +2,9 @@
 
     class InstallerPM
     {
-        var deps = null;
+        var $deps = null;
 
-        var shell = null;
+        var $shell = null;
 
         function __construct( $_mainShell )
         {
@@ -16,9 +16,9 @@
 
         function _installDeps( )
         {
-            if( !App::import( 'Vendors', 'PluginManager.'.$_resource ) )
+            if( !App::import( 'Vendors', 'PluginManager.PluginsManager' ) )
             {
-                $this->formattedOut( String::insert(__d('plugin', "Impossivel carregar [fg=red][u]PluginsManager[/u][/fg]\n", true) );
+                $this->shell->formattedOut( __d('plugin', "Impossivel carregar [fg=red][u]PluginsManager[/u][/fg]\n", true) );
                 exit;
             }
 
@@ -26,13 +26,23 @@
 
             if( empty($this->deps) )
             {
-                $this->shell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]') );
+                $this->shell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]'), false );
                 exit;
             }
 
+            $this->shell->out( "\n", false );
+
+            $pm = new PluginsManagerPM( array('mainShell' => $this->shell) );
             foreach( $this->deps as $name => $url )
             {
-                PluginsManager::installDep( $name, $url );
+                if( $pm->installDep( $name, $url ) )
+                {
+                    $this->shell->formattedOut( String::insert(__d('plugin', "    [fg=green][u]:plugin[/u][/fg] instalado com sucesso!\n", true), array('plugin'=>$name)) );
+                }
+                else
+                {
+                    $this->shell->formattedOut( String::insert(__d('plugin', "    Nao foi possivel instalar [fg=red][u]:plugin[/u][/fg]\n", true), array('plugin'=>$name)) );
+                }
             }
         }
 

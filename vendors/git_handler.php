@@ -91,7 +91,7 @@
                 }
             }
 
-            if ($return)
+            if( $return )
             {
                 $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }

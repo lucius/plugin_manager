@@ -27,9 +27,9 @@
 
         function _export( $_url, $_pluginName )
         {
-            $return = shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
+            $return = shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName.' 2>&1' );
 
-            $pattern = "/^svn:.*/i";
+            $pattern = "/^svn\:.*/i";
             $found;
             preg_match_all( $pattern, $return, $found);
 
@@ -38,7 +38,7 @@
 
         function _getExternals( )
         {
-            return trim(shell_exec('svn propget svn:externals . 2>&1') );
+            return trim(shell_exec('svn propget svn:externals .') );
         }
 
         function _externals( $_url, $_pluginName  )
@@ -55,41 +55,53 @@
                 unlink('.externals-tmp');
             }
 
-            $pattern = "/^svn.*/i";
+            $pattern = "/^svn\:.*/i";
             $found;
             preg_match_all( $pattern, $return, $found);
 
             return $found[0];
         }
-
+ 
         function install( $_url, $_pluginName )
         {
+            $return = true;
+
             if( $this->_dotSvnPathExists() )
             {
                 $this->mainShell->formattedOut( __d('plugin', '  -> adicionando svn:external... ', true), false );
 
-                if( !$this->_externals($_url, $_pluginName) )
+                $errors = $this->_externals($_url, $_pluginName);
+                if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-                    return false;
+                    $return = false;
                 }
-
-                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
             else
             {
                 $this->mainShell->formattedOut( __d('plugin', '  -> importando repositorio... ', true), false );
 
-                if( !$this->_export($_url, $_pluginName) )
+                $errors = $this->_export($_url, $_pluginName);
+                if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-                    return false;
+                    $return = false;
                 }
-
-                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
             }
 
-            return true;
+            if( $return )
+            {
+                $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true) );
+            }
+            else
+            {
+                foreach ( $errors as $error )
+                {
+                    $this->mainShell->formattedOut( "    - $error" );
+                }
+            }
+ 
+            return $return;
         }
     }
 ?>
