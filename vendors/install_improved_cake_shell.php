@@ -32,16 +32,16 @@
             $comando = 'git clone git://github.com/lucius/improved_cake_shell.git '.APP.'plugins/improved_cake_shell';
             $this->out( __d('plugin', '  -> Executando: '.$comando, true) );
 
-            $this->out( __d('plugin', '                 '.shell_exec($comando), true) );
+            $this->out( __d('plugin', '     '.shell_exec($comando), true) );
 
             if( file_exists(APP.'plugins/improved_cake_shell') )
             {
                 include(APP.'plugins/improved_cake_shell/vendors/shell/improved_cake_shell.php');
-                $this->out( __d('plugin', '                 Instalado com sucesso!', true) );
+                $this->out( __d('plugin', '     Instalado com sucesso!', true) );
             }
             else
             {
-                $this->out( __d('plugin', '                 Falha na instalacao!', true) );
+                $this->out( __d('plugin', '     Falha na instalacao!', true) );
             }
 
         }
