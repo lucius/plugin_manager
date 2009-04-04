@@ -183,7 +183,7 @@
             }
             else
             {
-                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK   [/bg][/fg]", true) );
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]", true) );
             }
         }
 
@@ -216,6 +216,43 @@
             else
             {
                 $this->mainShell->formattedOut( __d('plugin', "    - O hook nao existe\n", true) );
+            }
+        }
+
+        function _getDependencies( $_pluginName )
+        {
+            if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
+            {
+                $className = Inflector::camelize($_pluginName.'_installer');
+                include(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php');
+                $installer = new $className( array('mainShell' => $this->mainShell) );
+                return $installer->deps;
+            }
+
+            return null;
+        }
+
+        function _removeDependencies( $_deps, $_all )
+        {
+            $folder = new Folder();
+            $opt = 'y';
+
+            foreach( $_deps as $name => $url )
+            {
+                if( !$_all )
+                {
+                    $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\nTem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin'=>$name)) );
+                    $this->mainShell->formattedOut( __d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true) );
+                    $remove['deps'] = $this->mainShell->in( '', array('Y', 'N') );
+                }
+
+                if( strtolower($opt == 'y') )
+                {
+                    if( $folder->delete( APP.'plugins/'.$name) )
+                    {
+                        $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\n[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin'=>$name)) );
+                    }
+                }
             }
         }
 
@@ -288,9 +325,17 @@
 
             if( $method = $this->_getMethod($_nameOrUrl) )
             {
-                $url = $_nameOrUrl;
-                // @TODO 
-                $pluginName = 'teste_capeta';
+                if( $this->_isInstalled($_nameOrUrl) )
+                {
+//                    $this->update( $_nameOrUrl );
+                    exit;
+                }
+                else
+                {
+                    $url = $_nameOrUrl;
+                    // @TODO 
+                    $pluginName = $this->_getName( );
+                }
             }
             else
             {
@@ -348,7 +393,7 @@
             {
                 if( !App::import('Folder') )
                 {
-                    $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
+                   $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
                 }
 
                 if( $deps = $this->_getDependencies($_pluginName ) )
@@ -373,40 +418,49 @@
             }
         }
 
-        function _getDependencies( $_pluginName )
+        function update( $_pluginName )
         {
-            if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
+            if( !App::import('Folder') )
             {
-                $className = Inflector::camelize($_pluginName.'_installer');
-                include(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php');
-                $installer = new $className( array('mainShell' => $this->mainShell) );
-                return $installer->deps;
+                $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
             }
 
-            return null;
-        }
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "Atualizando [fg=green]:plugin[/fg]...", true), array('plugin'=>$_pluginName)), false );
 
-        function _removeDependencies( $_deps, $_all )
-        {
-            $folder = new Folder();
-            $opt = 'y';
-
-            foreach( $_deps as $name => $url )
+            
+            $url = $this->_getPluginUrl($_pluginName);
+            if( $url === false )
             {
-                if( !$_all )
-                {
-                    $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\nTem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin'=>$name)) );
-                    $this->mainShell->formattedOut( __d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true) );
-                    $remove['deps'] = $this->mainShell->in( '', array('Y', 'N') );
-                }
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=red] ERRO [/bg][/fg]", true) );
+                $this->mainShell->formattedOut( __d('plugin',"  -> O plugin nao existe ou nao possui uma url para atualizacao.", true) );
 
-                if( strtolower($opt == 'y') )
-                {
-                    if( $folder->delete( APP.'plugins/'.$name) )
-                    {
-                        $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\n[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin'=>$name)) );
-                    }
-                }
+                exit;
+            }
+
+            $this->mainShell->out( "\n", false );
+
+            $pluginFolder = new Folder();
+            $pluginFolder->move( array(
+                                        'from' => APP.'plugins/'.$_pluginName,
+                                        'to'   => APP.'plugins/'.$_pluginName.'-old'
+                                    ) );
+
+            $method = $this->_getMethod( $url );
+            $status = $this->_doInstall( $method, $url, $_pluginName );
+
+            if( $status )
+            {
+                $this->_saveUrlFile( $url, $_pluginName );
+                $this->_runInstallHook( $_pluginName );
+                $pluginFolder->delete( APP.'plugins/'.$_pluginName.'-old' );
+            }
+            else
+            {
+                $pluginFolder->move( array(
+                                        'to'   => APP.'plugins/'.$_pluginName.'-old',
+                                        'from' => APP.'plugins/'.$_pluginName
+                                    ) );
+
             }
         }
     }

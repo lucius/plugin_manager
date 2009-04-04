@@ -201,6 +201,9 @@
 
         function _update( $pluginName )
         {
+            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
+
+            $pluginsManager->update( $pluginName );
         }
 
     }
