@@ -194,6 +194,9 @@
 
         function _uninstall( $pluginName )
         {
+            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
+
+            $pluginsManager->uninstallPlugin( $pluginName );
         }
 
         function _update( $pluginName )

@@ -9,9 +9,6 @@
         function __construct( $_mainShell )
         {
             $this->shell = $_mainShell;
-
-            $this->startup( );
-            $this->_installDeps( );
         }
 
         function _installDeps( )

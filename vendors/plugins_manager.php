@@ -204,7 +204,10 @@
 
                 $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]\n  -> executando hook de instalacao...", true) );
                 $installer = new $className( $this->mainShell );
- 
+
+                $installer->startup( );
+                $installer->_installDeps( );
+
                 if( method_exists($installer, 'install' ) )
                 {
                     $installer->install( );
@@ -333,6 +336,78 @@
                 $this->_runInstallHook( $_pluginName );
             }
             return $status;
+        }
+
+        function uninstallPlugin( $_pluginName )
+        {
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "Tem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin'=>$_pluginName)) );
+            $this->mainShell->formattedOut( __d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true) );
+            $remove['plugin'] = $this->mainShell->in( '', array('Y', 'N') );
+
+            if( strtolower($remove['plugin']) == 'y' )
+            {
+                if( !App::import('Folder') )
+                {
+                    $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
+                }
+
+                if( $deps = $this->_getDependencies($_pluginName ) )
+                {
+                    $this->mainShell->formattedOut( __d('plugin', "\n\nDeseja remover as dependecias instaladas?", true) );
+                    $this->mainShell->formattedOut( __d('plugin', "[fg=green](N)[/fg] Nenhuma\n[fg=yellow](S)[/fg] Passo-a-Passo\n[fg=red](A)[/fg] Todas\n", true) );
+                    $remove['deps'] = $this->mainShell->in( '', array('N', 'S', 'A') );
+                }
+
+                if( strtolower($remove['deps']) != 'n' )
+                {
+                    $this->_removeDependencies( $deps, (strtolower($remove['deps']) == 'a') );
+                }
+
+                $folder = new Folder();
+                if( $folder->delete( APP.'plugins/'.$_pluginName) )
+                {
+                    $this->mainShell->formattedOut( String::insert(__d('plugin', "[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin'=>$_pluginName)) );
+                }
+
+
+            }
+        }
+
+        function _getDependencies( $_pluginName )
+        {
+            if( file_exists(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php') )
+            {
+                $className = Inflector::camelize($_pluginName.'_installer');
+                include(APP.'plugins/'.$_pluginName.'/vendors/shells/'.$_pluginName.'_installer.php');
+                $installer = new $className( array('mainShell' => $this->mainShell) );
+                return $installer->deps;
+            }
+
+            return null;
+        }
+
+        function _removeDependencies( $_deps, $_all )
+        {
+            $folder = new Folder();
+            $opt = 'y';
+
+            foreach( $_deps as $name => $url )
+            {
+                if( !$_all )
+                {
+                    $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\nTem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin'=>$name)) );
+                    $this->mainShell->formattedOut( __d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true) );
+                    $remove['deps'] = $this->mainShell->in( '', array('Y', 'N') );
+                }
+
+                if( strtolower($opt == 'y') )
+                {
+                    if( $folder->delete( APP.'plugins/'.$name) )
+                    {
+                        $this->mainShell->formattedOut( String::insert(__d('plugin', "\n\n[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin'=>$name)) );
+                    }
+                }
+            }
         }
     }
 
