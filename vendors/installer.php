@@ -10,14 +10,19 @@
         {
             $this->shell = $_mainShell;
 
-            $this->_installDeps( );
-
             $this->startup( );
+            $this->_installDeps( );
         }
 
         function _installDeps( )
         {
-            $this->shell->formattedOut( __d('plugin', 'Verificando a existencia de dependencias...') );
+            if( !App::import( 'Vendors', 'PluginManager.'.$_resource ) )
+            {
+                $this->formattedOut( String::insert(__d('plugin', "Impossivel carregar [fg=red][u]PluginsManager[/u][/fg]\n", true) );
+                exit;
+            }
+
+            $this->shell->formattedOut( __d('plugin', '      -> Verificando a existencia de dependencias...', true), false );
 
             if( empty($this->deps) )
             {

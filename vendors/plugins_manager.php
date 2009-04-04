@@ -52,11 +52,9 @@
             }
 
             $repositoriesManager = new RepositoriesManagerPM( array( 'mainShell' => $this->mainShell ) );
-
             $repositories = $repositoriesManager->get( ); 
 
             $return = array( );
-
             foreach( $repositories as $repositorie )
             {
                 $pluginList = $repositoriesManager->getRepositorieContent( $repositorie, $this->mainShell->proxy );
@@ -173,18 +171,15 @@
             return $status;
         }
 
-        function _saveUrlFile( $_method, $_url, $_pluginName)
+        function _saveUrlFile( $_url, $_pluginName)
         {
-            $filePath = APP."plugins/$_pluginName/.url-$_method";
+            $filePath = APP."plugins/$_pluginName/.url";
 
             $this->mainShell->formattedOut( __d('plugin', "  -> salvando arquivo .url... ", true), false );
 
-            if( !file_put_contents($filePath, $_url) === false )
+            if( file_put_contents($filePath, $_url) === false )
             {
-                $this->mainShell->formattedOut( __d('plugin',
-"[fg=black][bg=red] ERRO [/bg][/fg]
-    - nao sera possivel realizar a atualizacao do plugin atraves
-      do plugin_manager.", true) );
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=red] ERRO [/bg][/fg]\n    - nao sera possivel realizar a atualizacao do plugin atraves\n      do plugin_manager.", true) );
             }
             else
             {
@@ -206,10 +201,7 @@
                     exit;
                 }
 
-                $this->mainShell->formattedOut( __d('plugin',
-"[fg=black][bg=green]  OK  [/bg][/fg]
-  -> executando hook de instalacao...", true) );
-
+                $this->mainShell->formattedOut( __d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]\n  -> executando hook de instalacao...", true) );
                 $installer = new $className( $this->mainShell );
  
                 if( method_exists($installer, 'install' ) )
@@ -235,7 +227,7 @@
 
                 if( $this->_getPluginUrl($plugin) !== false )
                 {
-                    $out .= __d( 'plugin', " *[/fg]", true );
+                    $out .= __d( 'plugin', " *[/fg]\n", true );
                 }
                 else
                 {
@@ -253,9 +245,7 @@
             $this->mainShell->formattedOut( String::insert(__d('plugin', "Buscando plugins: [u]:pattern[/u]\n", true), array('pattern'=>$_pattern)) );
 
             $avaliable = $this->_getListAvaliablePlugins( );
-
             $found = false;
-
             foreach( $avaliable as $plugin )
             {
                 if( preg_match('/.*'.$_pattern.'.*/', $plugin['name']) )
@@ -280,8 +270,8 @@
             if( !$found )
             {
                 $this->mainShell->formattedOut( __d('plugin', "Nao foram encontrados plugins\n", true) );
-
                 $this->mainShell->hr( );
+
                 exit;
             }
 
@@ -295,6 +285,7 @@
             if( $method = $this->_getMethod($_nameOrUrl) )
             {
                 $url = $_nameOrUrl;
+                // @TODO 
                 $pluginName = 'teste_svn';
             }
             else
@@ -318,29 +309,28 @@
             }
 
             $status = $this->_doInstall( $method, $url, $pluginName );
-
             if( $status )
             {
-                $this->_saveUrlFile( $method, $url, $pluginName );
+                $this->_saveUrlFile( $url, $pluginName );
                 $this->_runInstallHook( $pluginName );
             }
         }
 
         function installDep( $_pluginName, $_url )
         {
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "         - Instalando [u]:plugin[/u]...", true), array('plugin'=>$_pluginName)) );
+
             if( !($method = $this->_getMethod($_url)) )
             {
                 $this->mainShell->formattedOut( String::insert(__d('plugin', "A URL '[fg=red][u]:url[/u][/fg]' nao parece ser valida.", true), array('url'=>$url)) );
             }
 
             $status = $this->_doInstall( $method, $url, $pluginName );
-
             if( $status )
             {
-                $this->_saveUrlFile( $method, $url, $pluginName );
+                $this->_saveUrlFile( $url, $pluginName );
+                $this->_runInstallHook( $pluginName );
             }
-
-            $this->_runInstallHook( $pluginName );
         }
     }
 

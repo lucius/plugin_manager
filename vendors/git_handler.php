@@ -27,16 +27,32 @@
 
         function _clone( $_url, $_pluginName )
         {
-            $return = shell_exec( 'git clone '.$_url.' '.APP.'plugins/'.$_pluginName.' 2>&1' );
+            $pluginPath = APP.'plugins/'.$_pluginName;
+            $return = shell_exec( 'git clone '.$_url.' '.$pluginPath.' 2>&1' );
 
             $pattern = "/.*fatal.*/i";
             $found;
-            preg_match_all( $pattern, $return, $found);
+            
+            if( !preg_match_all( $pattern, $return, $found) )
+            {
+                $this->_excludeGitFolder( $pluginPath );
+            }
 
-            //remover .git
             return $found[0];
         }
 
+        function _excludeGitFolder( $_pluginPath )
+        {
+            if( !App::import('Folder') )
+            {
+                $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
+            }
+
+            $gitFolder = $_pluginPath.'/.git/';
+            $folder = new Folder();
+            $folder->delete( $gitFolder );
+        }
+ 
         function _submodule( $_url, $_pluginName  )
         {
             $return = shell_exec( 'git submodule add '.$_url.' plugins/'.$_pluginName.' 2>&1' );
@@ -60,7 +76,6 @@
                 if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-
                     $return = false;
                 }
             }
@@ -72,7 +87,6 @@
                 if( !empty($errors) )
                 {
                     $this->mainShell->formattedOut( __d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true) );
-
                     $return = false;
                 }
             }
@@ -88,7 +102,6 @@
                     $this->mainShell->formattedOut( "    - $error" );
                 }
             }
-
 
             return $return;
         }

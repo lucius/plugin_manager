@@ -6,26 +6,12 @@
 
         $installICS =& ClassRegistry::init( 'InstallImprovedCakeShell' );
 
-        $installICS->install( );
+        $installICS->install();
     }
 
     class PluginShell extends ImprovedCakeShell 
     {
         var $proxy = false;
-
-        function _initialize( )
-        {
-            Configure::write( 'localePaths', am(Configure::getInstance()->localePaths,dirname(dirname(dirname(__FILE__))).DS.'locale'.DS) );
-            if( !defined('DEFAULT_LANGUAGE') )
-            {
-                define('DEFAULT_LANGUAGE', 'eng');
-            }
-
-            if( !empty($this->params['proxy']) )
-            {
-                $this->proxy = $this->params['proxy'];
-            }
-        }
 
         function main()
         {
@@ -35,9 +21,9 @@
             {
                 $this->formattedOut( __d('plugin', 'Voce precisa especifiar o que deseja fazer...', true) );
 
-                $this->_listaOpcoesDisponiveis( );
+                $this->_listAvaliableOptions( );
 
-                $this->out( '' );
+                $this->out( "\n", false );
                 $this->hr( );
                 exit;
             }
@@ -69,12 +55,28 @@
                     ( isset($this->args[1]) ) ? $this->_update( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 default:
-                    $this->formattedOut( __d('plugin', '[bg=red][fg=white] OPCAO INVALIDA [/fg][/bg]', true) );
-                    $this->out( '' );
+                    $this->formattedOut( __d('plugin', "\n[bg=red][fg=white] OPCAO INVALIDA [/fg][/bg]\n", true) );
                     $this->_listAvaliableOptions( );
                     break;
             }
             $this->hr( );
+        }
+
+
+        function _initialize( )
+        {
+            Configure::write( 'localePaths', am(Configure::getInstance()->localePaths,dirname(dirname(dirname(__FILE__))).DS.'locale'.DS) );
+            Configure::write( 'Cache.disable', true );
+
+            if( !defined('DEFAULT_LANGUAGE') )
+            {
+                define('DEFAULT_LANGUAGE', 'eng');
+            }
+
+            if( !empty($this->params['proxy']) )
+            {
+                $this->proxy = $this->params['proxy'];
+            }
         }
 
         function _missingParameter( )
@@ -88,7 +90,7 @@
             $this->formattedOut( __d('plugin', "PLUGIN_OPTIONS", true) );
         }
 
-        function _importResource( $_resource, $_constructorParams )
+        function _importPluginResource( $_resource, $_constructorParams )
         {
             if( !App::import( 'Vendors', 'PluginManager.'.$_resource ) )
             {
@@ -104,13 +106,13 @@
 
         function _addRep( $url )
         {
-            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
+            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
             $repositoriesManager->add( $url );
         }
 
         function _remRep( $url )
         {
-            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
+            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
             $repositoriesManager->remove( $url );
         }
 
@@ -131,10 +133,9 @@
             }
             else
             {
-                $this->formattedOut( __d('plugin', '[bg=red][fg=black] ERRO [/fg][/bg] Opcao Invalida', true) );
-
-                $this->out( '' );
+                $this->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg] Opcao Invalida\n", true) );
                 $this->hr( );
+
                 exit;
             }
 
@@ -153,7 +154,7 @@
 
         function _listRep( $url = null )
         {
-            $repositoriesManager = $this->_importResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
+            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
 
             if( empty($url) )
             {
@@ -172,21 +173,21 @@
 
         function _find( $pluginName )
         {
-            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
 
             $pluginsManager->find( $pluginName );
         }
 
         function _list( )
         {
-            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
 
             $pluginsManager->listInstalledPlugins( );
         }
 
         function _install( $nameOrUrl )
         {
-            $pluginsManager = $this->_importResource( 'PluginsManager', array( 'mainShell' => $this ) );
+            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
 
             $pluginsManager->installPlugin( $nameOrUrl );
         }

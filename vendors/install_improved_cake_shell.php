@@ -21,43 +21,38 @@
             }
         }
 
-        /* 
-         * Inserir Autenticacao no proxy
-         */
         function install( )
         {
-            $this->out( __d('plugin',
-"Instalando dependencias necessarias para o funcionamento do Plugin Manager...
-  -> Instalando: Improved Cake Shell...", true) );
+            $this->out( __d('plugin', "Instalando dependencias necessarias para o funcionamento do Plugin Manager...\n  -> Instalando: Improved Cake Shell...", true) );
 
             $comando = 'git clone git://github.com/lucius/improved_cake_shell.git '.APP.'plugins/improved_cake_shell';
             $this->out( __d('plugin', '    - Executando: '.$comando, true) );
 
-            $this->out( __d('plugin', '     '.shell_exec($comando), true) );
+            $this->out( '      '.shell_exec($comando) );
 
             if( file_exists(APP.'plugins/improved_cake_shell') )
             {
-                include(APP.'plugins/improved_cake_shell/vendors/shell/improved_cake_shell.php');
+                include( APP.'plugins/improved_cake_shell/vendors/shell/improved_cake_shell.php' );
                 $this->out( __d('plugin', '     Instalado com sucesso!', true) );
+
+                $this->_excludeGitFolder( );
             }
             else
             {
-                $this->out( __d('plugin', '     Falha na instalacao!', true) );
+                $this->out( __d('plugin', "    FALHA NA INSTALACAO!\n     Plugin Manager nao podera ser executado", true) );
             }
-
         }
 
-/*
- * Fazer Corretamente
- */
         function _excludeGitFolder( )
         {
-            if( !App::import('Folder') && !App::import('File') )
+            if( !App::import('Folder') )
             {
-
+                $this->out( __d('plugin', "Impossivel caregar 'Folder'") );
             }
-            $app = new Folder( APP.'plugins/improved_cake_shell/.git/' );
-            $app->delete();
+
+            $gitFolder = APP.'plugins/improved_cake_shell/.git/';
+            $folder = new Folder();
+            $folder->delete( $gitFolder );
         }
     }
 

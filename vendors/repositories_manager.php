@@ -21,18 +21,15 @@
 
             if( ! file_exists($this->repsPath) )
             {
-                $errorMessage  = String::insert(  __d('plugin',
-" [fg=red]O arquivo de repositorios nao pode ser encontrado!
- O local correto do arquivo e :repsPath [/fg]\n", true), array('repsPath'=> $this->repsPath) );
-                
+                $errorMessage  = String::insert(  __d('plugin', " [fg=red]O arquivo de repositorios nao pode ser encontrado!\n O local correto do arquivo e :repsPath [/fg]\n", true), array('repsPath'=> $this->repsPath) );
                 $this->mainShell->formattedOut( $errorMessage );
-
                 $this->mainShell->hr( );
+
                 exit;
             }
+
             $fileContent = file_get_contents( $this->repsPath );
             $fileContent = explode( "\n", $fileContent );
-                
             foreach( $fileContent as $repositorie )
             {
                 if( $this->_isHttp($repositorie) )
@@ -79,10 +76,7 @@
             {
                 if( $this->_find($_url) )
                 {
-                    $this->mainShell->formattedOut( __d('plugin',
-"[b] ... [/b]
-  -> O repositorio ja existe\n", true) );
-
+                    $this->mainShell->formattedOut( __d('plugin', "[b] ... [/b]\n  -> O repositorio ja existe\n", true) );
                     $this->mainShell->hr( );
 
                     exit;
@@ -96,16 +90,12 @@
                 }
                 else
                 {
-                    $this->mainShell->formattedOut( __d('plugin',
-"[bg=red][fg=black] ERRO [/fg][/bg]
-  -> O arquivo nao pode ser acessado", true) );
+                    $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O arquivo nao pode ser acessado", true) );
                 }
             }
             else
             {
-                $this->mainShell->formattedOut( __d('plugin', 
-"[bg=red][fg=black] ERRO [/fg][/bg]
-  -> O parametro a ser adicionado nao parece ser uma URL", true) );
+                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O parametro a ser adicionado nao parece ser uma URL", true) );
             }
         }
 
@@ -115,12 +105,10 @@
 
             if( !$this->_find($_url) )
             {
-                $this->mainShell->formattedOut( __d('plugin', 
-"[bg=red][fg=black] ERRO [/fg][/bg]
-  -> O repositorio nao existe", true) );
-
+                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O repositorio nao existe", true) );
                 $this->mainShell->out( '' );
                 $this->mainShell->hr( );
+
                 exit;
             }
             unset( $this->repositories[array_search($_url, $this->repositories)] );
@@ -131,9 +119,7 @@
             }
             else
             {
-                $this->mainShell->formattedOut( __d('plugin',
-"[bg=red][fg=black] ERRO [/fg][/bg]
-  -> O arquivo nao pode ser acessado", true) );
+                $this->mainShell->formattedOut( __d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O arquivo nao pode ser acessado", true) );
             }
         }
 
@@ -152,11 +138,9 @@
             $pluginsManager = new PluginsManagerPM( array( 'mainShell' => $this->mainShell ) );
 
 
-            $this->mainShell->formattedOut( String::insert(__d('plugin', 'Listando plugins disponiveis em [u]:rep_url[/u]', true), array('rep_url'=> $_url)) );
+            $this->mainShell->formattedOut( String::insert(__d('plugin', "Listando plugins disponiveis em [u]:rep_url[/u]\n", true), array('rep_url'=> $_url)) );
 
             $pluginList = $this->getRepositorieContent( $_url, $_proxy );
-
-            $this->mainShell->out( '' );
             foreach( $pluginList[2] as $key => $pluginTitle )
             {
                 $out = String::insert( __d('plugin', "[fg=green]    :pluginTitle", true), array('pluginTitle'=> $pluginTitle) );
@@ -185,10 +169,7 @@
 
             if( $content['erro'] )
             {
-                $this->mainShell->formattedOut( String::insert(__d('plugin', 
-"\n[fg=black][bg=red] ERRO [/bg][/fg] :erro
-       Se voce usa proxy para se conectar a internet, tente usar a opcao
-       \"-proxy username:password@endereco.do.proxy:porta\"\n", true), array('erro'=> $content['text'])) );
+                $this->mainShell->formattedOut( String::insert(__d('plugin', "\n[fg=black][bg=red] ERRO [/bg][/fg] :erro\n       Se voce usa proxy para se conectar a internet, tente usar a opcao\n       \"-proxy username:password@endereco.do.proxy:porta\"\n", true), array('erro'=> $content['text'])) );
 
                 $this->mainShell->hr( );
                 exit;
@@ -197,7 +178,6 @@
             $this->_validateHttpErrors( $content['text'] );
 
             $pluginList = array( );
-
             $text = html_entity_decode($content['text']);
             preg_match_all( '/\<li\>\<a href="(.*)"\>(.*)\<\/a\>\<\/li\>/i', $text, $pluginList );
 
@@ -211,11 +191,9 @@
                 $error = array();
                 preg_match_all("/\<title\>(.*)\<\/title\>/i", $_text, $error);
 
-                $this->mainShell->out( '' );
-                $this->mainShell->formattedOut( String::insert(__d('plugin', '[fg=black][bg=red] ERRO: :erro [/bg][/fg]', true), array('erro'=> $error[1][0])) );
-
-                $this->mainShell->out( '' );
+                $this->mainShell->formattedOut( String::insert(__d('plugin', "\n[fg=black][bg=red] ERRO: :erro [/bg][/fg]\n", true), array('erro'=> $error[1][0])) );
                 $this->mainShell->hr( );
+
                 exit;
             }
         }
@@ -224,19 +202,11 @@
         {
             if( !function_exists('curl_init') )
             {
-                $this->mainShell->formattedOut( __d('plugin',
-"\nA biblioteca [fg=black][bg=red]PHP CURL[/bg][/fg] nao esta habilitada.
-Descomente a linha com o conteudo
-[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou
-[fg=red]  - [u]extension=php_curl.dll[/u][/fg]
-no php.ini\n", true ) );
-
+                $this->mainShell->formattedOut( __d('plugin', "\nA biblioteca [fg=black][bg=red]PHP CURL[/bg][/fg] nao esta habilitada.\nDescomente a linha com o conteudo\n[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou\n[fg=red]  - [u]extension=php_curl.dll[/u][/fg]\nno php.ini\n", true ) );
                 $this->mainShell->hr( );
 
                 exit;
             };
-        
-            $cu = curl_init( );
 
             $options = array(
                 CURLOPT_URL => $_url,
@@ -247,11 +217,11 @@ no php.ini\n", true ) );
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_RETURNTRANSFER => true
             );
-            
+        
+            $cu = curl_init( );
             curl_setopt_array( $cu, $options );
 
             $content['text'] = curl_exec( $cu );
-
             if( $content['erro'] = curl_errno($cu) )
             {
                 $content['text'] = curl_error( $cu );

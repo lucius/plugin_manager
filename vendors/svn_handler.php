@@ -29,11 +29,10 @@
         {
             $return = shell_exec( 'svn export '.$_url.' '.APP.'plugins'.DS.$_pluginName );
 
-            $pattern = "/^svn.*/i";
+            $pattern = "/^svn:.*/i";
             $found;
             preg_match_all( $pattern, $return, $found);
 
-            //remover .git
             return $found[0];
         }
 
@@ -92,7 +91,5 @@
 
             return true;
         }
- 
     }
-
 ?>
