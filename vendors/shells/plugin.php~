@@ -70,7 +70,7 @@
 
             if( !defined('DEFAULT_LANGUAGE') )
             {
-                define('DEFAULT_LANGUAGE', 'pt-br');
+                define('DEFAULT_LANGUAGE', 'pt-BR');
             }
 
             if( !empty($this->params['proxy']) )
