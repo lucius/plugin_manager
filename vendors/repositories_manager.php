@@ -219,7 +219,8 @@
                 CURLOPT_FRESH_CONNECT => true,
                 CURLOPT_HTTPHEADER => array("Pragma: "),
                 CURLOPT_DNS_USE_GLOBAL_CACHE => false,
-                CURLOPT_DNS_CACHE_TIMEOUT => 1
+                CURLOPT_DNS_CACHE_TIMEOUT => 1,
+                CURLOPT_ENCODING => 'deflate'
             );
         
             $cu = curl_init( );
