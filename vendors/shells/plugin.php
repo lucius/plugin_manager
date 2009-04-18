@@ -11,6 +11,7 @@
 
     class PluginShell extends ImprovedCakeShell 
     {
+	 	var $tasks = array('Plugins');
         var $proxy = false;
 
         function main()
@@ -180,9 +181,7 @@
 
         function _list( )
         {
-            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
-
-            $pluginsManager->listInstalledPlugins( );
+			$this->Plugins->listAll();
         }
 
         function _install( $nameOrUrl )
