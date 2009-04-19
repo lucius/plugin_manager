@@ -33,9 +33,5 @@ class GitTaskTestCase extends CakeTestCase {
 	function testClassExists() {
 		$this->assertTrue(class_exists('GitTask'));
 	}
-
-	function testInstall() {
-		# code...
-	}
 }
 ?>

@@ -74,7 +74,7 @@ class InstallerTask extends ImprovedCakeShell {
 			}
 
 			$this->formattedOut(__d('plugin',"[fg=black][bg=green]  OK  [/bg][/fg]\n  -> executando hook de instalação...", true));
-			$installer = new $className($this->mainShell);
+			$installer = new $className($this);
 
 			$installer->startup();
 			$installer->_installDeps();

@@ -44,13 +44,72 @@ class PluginsTask extends ImprovedCakeShell {
 	}
 
 	/**
+	 * Remove um plugin instalado
+	 */
+	function uninstall($plugin) {
+		$this->formattedOut(String::insert(__d('plugin', "Tem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin' => $plugin)));
+		$this->formattedOut(__d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true));
+		$remove['plugin'] = $this->in('', array('Y', 'N'));
+
+		if (strtolower($remove['plugin']) == 'y') {
+			App::import('Folder');
+
+			if ($deps = $this->_getDependencies($plugin)) {
+				$this->mainShell->formattedOut(__d('plugin', "\n\nDeseja remover as dependecias instaladas?", true));
+				$this->mainShell->formattedOut(__d('plugin', "[fg=green](N)[/fg] Nenhuma\n[fg=yellow](S)[/fg] Passo-a-Passo\n[fg=red](A)[/fg] Todas\n", true));
+				$remove['deps'] = $this->mainShell->in('', array('N', 'S', 'A'));
+			}
+
+			if (!empty($remove['deps']) && strtolower($remove['deps']) != 'n') {
+				$this->_removeDependencies($deps, (strtolower($remove['deps']) == 's'));
+			}
+
+			$folder = new Folder();
+			if ($folder->delete($this->params['working'] . DS . 'plugins/' . $plugin)) {
+				$this->formattedOut(String::insert(__d('plugin', "[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin'=>$plugin)));
+			}
+		}
+	}
+
+	function _getDependencies($plugin) {
+		$installer = $this->params['working'] . 'plugins/' . $plugin . '/vendors/shells/' . $plugin . '_installer.php';
+		if (file_exists($installer)) {
+			$className = Inflector::camelize($plugin . '_installer');
+			include($installer);
+			$installer = new $className(array('mainShell' => $this));
+			return $installer->deps;
+		}
+
+		return null;
+	}
+
+	function _removeDependencies($dependencies, $step) {
+		$folder = new Folder();
+		$opt = 'y';
+
+		foreach ($dependencies as $name => $url) {
+			if ($step) {
+				$this->formattedOut(String::insert(__d('plugin', "\n\nTem certeza que deseja remover [fg=yellow]:plugin[/fg]?", true), array('plugin' => $name)));
+				$this->formattedOut(__d('plugin', "[fg=green](Y)[/fg] Sim\n[fg=red](N)[/fg] Nao\n", true));
+				$remove['deps'] = $this->in('', array('Y', 'N'));
+			}
+
+			if (strtolower($opt == 'y')) {
+				if ($folder->delete($this->params['working'] . 'plugins/' . $name)) {
+					$this->formattedOut(String::insert(__d('plugin', "\n\n[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin' => $name)));
+				}
+			}
+		}
+	}
+
+	/**
 	 * Retorna um array com todos os plugins instalados
 	 */
 	function _list() {
-        $Folder = new Folder($this->params['working'] . DS . 'plugins');
-        $listPluginsFolder = $Folder->ls();
-        
-        return $listPluginsFolder[0];
+		$Folder = new Folder($this->params['working'] . DS . 'plugins');
+		$listPluginsFolder = $Folder->ls();
+
+		return $listPluginsFolder[0];
 	}
 
 	/**
