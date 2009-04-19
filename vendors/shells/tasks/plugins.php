@@ -39,7 +39,7 @@ class PluginsTask extends ImprovedCakeShell {
 			$name = $this->in(__d('plugin', 'digite o nome do plugin que está instalando (ou deixe vazio para encerrar): ', true));
 			$name = trim($name);
 			if (empty($name)) {
-				$this->stop();
+				$this->_stop();
 			}
 			$params['name'] = $name;
 		}
@@ -90,7 +90,7 @@ class PluginsTask extends ImprovedCakeShell {
 		if (empty($url)) {
 			$this->formattedOut(__d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true));
 			$this->formattedOut(__d('plugin', "  -> O plugin nao existe ou nao possui uma url para atualizacao.", true));
-			$this->stop();
+			$this->_stop();
 		}
 
 		$this->out("\n", false);

@@ -11,7 +11,7 @@
 
     class PluginShell extends ImprovedCakeShell 
     {
-	 	var $tasks = array('Plugins');
+	 	var $tasks = array('Repositories', 'Plugins');
         var $proxy = false;
 
         function main()
@@ -107,8 +107,7 @@
 
         function _addRep( $url )
         {
-            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
-            $repositoriesManager->add( $url );
+			$this->Repositories->add($url);
         }
 
         function _remRep( $url )
