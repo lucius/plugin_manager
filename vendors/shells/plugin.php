@@ -112,8 +112,7 @@
 
         function _remRep( $url )
         {
-            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
-            $repositoriesManager->remove( $url );
+			$this->Repositories->remove($url);
         }
 
         function _selectRepositorie( $_repositories )

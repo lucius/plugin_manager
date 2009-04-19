@@ -39,6 +39,29 @@ class RepositoriesTask extends ImprovedCakeShell {
 	}
 
 	/**
+	 * Remove um repositorio do arquivo .reps
+	 */
+	//TODO: Listar as urls para o usuário selecionar qual deseja remover
+	function remove($url) {
+		$this->formattedOut(String::insert(__d('plugin', '[fg=red]Excluindo[/fg] repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url' =>  $url)), false);
+
+		if (!$this->_find($url)) {
+			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O repositorio nao existe", true));
+			$this->out('');
+			$this->hr();
+			$this->_stop();
+		}
+
+		unset($this->repositories[array_search($url, $this->repositories)]);
+
+		if ($this->_save()) {
+			$this->formattedOut(__d('plugin', '[bg=green][fg=black]  OK  [/fg][/bg]', true));
+		} else {
+			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O arquivo nao pode ser acessado", true));
+		}
+	}
+
+	/**
 	 * Carrega a lista de repositorios do arquivo
 	 */
 	function _parser() {
