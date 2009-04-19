@@ -18,9 +18,11 @@ class InstallerTask extends ImprovedCakeShell {
 			$this->formattedOut(__d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true));
 			$this->_createUrlFile($url, $path);
 			$this->_runInstallHook($name);
+			return true;
 		} else {
 			$this->formattedOut(__d('plugin', '[fg=black][bg=red] ERRO [/bg][/fg]', true));
 		}
+		return false;
 	}
 
 	/**

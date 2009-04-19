@@ -43,8 +43,11 @@ class PluginsTask extends ImprovedCakeShell {
 			}
 			$params['name'] = $name;
 		}
-		//TODO: Se $params['name'] já existir somente atualizar
-		$this->Installer->install($params['url'], $params['name']);
+		
+		if ($this->_exists($params['name'])) {
+			return $this->update($params['name'], $params['url']);
+		}
+		return $this->Installer->install($params['url'], $params['name']);
 	}
 
 	/**
@@ -75,8 +78,48 @@ class PluginsTask extends ImprovedCakeShell {
 		}
 	}
 
+	function update($plugin, $url = null) {
+		App::import('Folder');
+
+		$this->formattedOut(String::insert(__d('plugin', "Atualizando [fg=green]:plugin[/fg]...", true), array('plugin' => $plugin)), false);
+
+		if (empty($url)) {
+			$url = $this->_url($plugin);
+		}
+
+		if (empty($url)) {
+			$this->formattedOut(__d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true));
+			$this->formattedOut(__d('plugin', "  -> O plugin nao existe ou nao possui uma url para atualizacao.", true));
+			$this->stop();
+		}
+
+		$this->out("\n", false);
+
+		$pluginFolder = new Folder();
+		$pluginFolder->move(array(
+			'from' => $this->params['working'] . DS . 'plugins/' . $plugin,
+			'to'   => $this->params['working'] . DS . 'plugins/' . $plugin . '-old'
+		));
+
+		$status = $this->Installer->install($url, $plugin);
+
+		if ($status) {
+			$pluginFolder->delete($this->params['working'] . DS . 'plugins/' . $plugin . '-old');
+		} else {
+			$this->formattedOut(__d('plugin', "[fg=black][bg=red] ERRO [/bg][/fg]", true));
+			$this->formattedOut(__d('plugin', "  -> Nao foi possivel atualizar o plugin.", true));
+			$pluginFolder->move(array(
+				'from'   => $this->params['working'] . DS . 'plugins/' . $plugin . '-old',
+				'to' => $this->params['working'] . DS . 'plugins/' . $plugin
+			));
+		}
+	}
+
+	/**
+	 * Lista todas as dependências de um plugin
+	 */
 	function _getDependencies($plugin) {
-		$installer = $this->params['working'] . 'plugins/' . $plugin . '/vendors/shells/' . $plugin . '_installer.php';
+		$installer = $this->params['working'] . DS . 'plugins/' . $plugin . '/vendors/shells/' . $plugin . '_installer.php';
 		if (file_exists($installer)) {
 			$className = Inflector::camelize($plugin . '_installer');
 			include($installer);
@@ -87,6 +130,9 @@ class PluginsTask extends ImprovedCakeShell {
 		return null;
 	}
 
+	/**
+	 * Remove as dependências de um plugin
+	 */
 	function _removeDependencies($dependencies, $step) {
 		$folder = new Folder();
 		$opt = 'y';
@@ -99,7 +145,7 @@ class PluginsTask extends ImprovedCakeShell {
 			}
 
 			if (strtolower($opt == 'y')) {
-				if ($folder->delete($this->params['working'] . 'plugins/' . $name)) {
+				if ($folder->delete($this->params['working'] . DS . 'plugins/' . $name)) {
 					$this->formattedOut(String::insert(__d('plugin', "\n\n[fg=yellow]:plugin[/fg] removido com sucesso!", true), array('plugin' => $name)));
 				}
 			}
@@ -153,6 +199,11 @@ class PluginsTask extends ImprovedCakeShell {
 		}
 		
 		return compact('url', 'name');
+	}
+
+	function _exists($plugin) {
+		$path = $this->params['working'] . DS . 'plugins' . DS . $plugin;
+		return file_exists($path) && is_dir($path);
 	}
 }
 ?>
