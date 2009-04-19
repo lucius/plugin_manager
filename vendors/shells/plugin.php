@@ -153,21 +153,7 @@
 
         function _listRep( $url = null )
         {
-            $repositoriesManager = $this->_importPluginResource( 'RepositoriesManager', array( 'mainShell' => $this ) );
-
-            if( empty($url) )
-            {
-                $repositories = $repositoriesManager->get( );
-                if( !count($repositories) )
-                {
-                    $this->formattedOut( __d('plugin', "Nao existem repositorios para serem listados\n", true) );
-                    exit;
-                }
-
-                $url = $this->_selectRepositorie( $repositories );
-            }
-
-            $repositoriesManager->showRepositorieContent( $url, $this->proxy );
+			$this->Repositories->plugins($url, $this->proxy);
         }
 
         function _find( $pluginName )

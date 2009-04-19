@@ -2,6 +2,7 @@
 App::import('Plugins', 'ImprovedCakeShell.ImprovedCakeShell');
 
 class RepositoriesTask extends ImprovedCakeShell {
+	var $tasks = array('Plugins');
 	var $repositories = array();
 	var $path = null;
 	
@@ -66,6 +67,16 @@ class RepositoriesTask extends ImprovedCakeShell {
 	}
 
 	/**
+	 * Lista todos os plugins de um repositorio
+	 */
+	function plugins($url = null, $proxy = false) {
+		while (empty($url)) {
+			$url = $this->_select();
+		}
+		$this->_show($url, $proxy);
+	}
+
+	/**
 	 * Carrega a lista de repositorios do arquivo
 	 */
 	function _parser() {
@@ -118,6 +129,11 @@ class RepositoriesTask extends ImprovedCakeShell {
 	}
 
 	function _select() {
+		if (empty($this->repositories)) {
+			$this->formattedOut(__d('plugin', "Nao existem repositorios para serem listados\n", true));
+			$this->stop();
+		}
+
 		$this->formattedOut(__d('plugin', 'Selecione um Repositorio para remover', true));
 		$this->out('');
 
@@ -138,6 +154,104 @@ class RepositoriesTask extends ImprovedCakeShell {
 			return $this->repositories[$selected];
 		}
 		return false;
+	}
+
+	/**
+	 * Mostra o conteúdo de um repositório
+	 */
+	function _show($url, $proxy = false) {
+		$this->formattedOut(String::insert(__d('plugin', "Listando plugins disponiveis em [u]:rep_url[/u]\n", true), array('rep_url' => $url)));
+
+		$plugins = $this->_plugins($url, $proxy);
+		foreach ($plugins[2] as $key => $plugin) {
+			$out = String::insert(__d('plugin', "[fg=green]    :pluginTitle", true), array('pluginTitle'=> $plugin));
+
+			if ($this->Plugins->_exists($plugin)) {
+				$out .= __d('plugin', " *[/fg]\n", true);
+			} else {
+				$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl' => $plugins[1][$key]));
+			}
+
+			$this->formattedOut($out);
+		}
+
+		if (empty($pluginList[2])) {
+			$this->formattedOut(__d('plugin', 'Nao foram encontrados plugins no repositorio', true));
+		}
+	}
+
+	/**
+	 * Retorna um array com os plugins do repositorio
+	 */
+	function _plugins($url, $proxy = false) {
+		$content = $this->_html($url, $proxy); 
+
+		if ($content['erro']) {
+			$this->formattedOut(String::insert(__d('plugin', "\n[fg=black][bg=red] ERRO [/bg][/fg] :erro\n       Se voce usa proxy para se conectar a internet, tente usar a opcao\n       \"-proxy username:password@endereco.do.proxy:porta\"\n", true), array('erro' =>  $content['text'])));
+
+			$this->hr( );
+			$this->_stop();
+		}
+
+		$this->_validateHttpErrors($content['text']);
+
+		$plugins = array();
+		$text = html_entity_decode($content['text']);
+		preg_match_all('/\<li\>\<a href="(.*)"\>(.*)\<\/a\>\<\/li\>/i', $text, $plugins);
+
+		return $plugins;
+	}
+
+	/**
+	 * Pega o conteúdo html do repositorio usando o Curl
+	 */
+	function _html($url, $proxy = false) {
+		if (!function_exists('curl_init')) {
+			$this->formattedOut(__d('plugin', "\nA biblioteca [fg=black][bg=red]PHP CURL[/bg][/fg] nao esta habilitada.\nDescomente a linha com o conteudo\n[fg=red]  - [u]extension=php_curl.so[/u][/fg] ou\n[fg=red]  - [u]extension=php_curl.dll[/u][/fg]\nno php.ini\n", true));
+			$this->hr();
+			$this->_stop();
+		}
+
+		$options = array(
+			CURLOPT_URL                  => $url,
+			CURLOPT_PROXY                => $proxy,
+			CURLOPT_TIMEOUT              => 10,
+			CURLOPT_HEADER               => true,
+			CURLOPT_MAXREDIRS            => 10,
+			CURLOPT_FOLLOWLOCATION       => true,
+			CURLOPT_RETURNTRANSFER       => true,
+			CURLOPT_FRESH_CONNECT        => true,
+			CURLOPT_HTTPHEADER           => array("Pragma: "),
+			CURLOPT_DNS_USE_GLOBAL_CACHE => false,
+			CURLOPT_DNS_CACHE_TIMEOUT    => 1,
+			CURLOPT_ENCODING             => 'deflate'
+		);
+
+		$cu = curl_init();
+		curl_setopt_array($cu, $options);
+
+		$content['text'] = curl_exec($cu);
+		if ($content['erro'] = curl_errno($cu)) {
+			$content['text'] = curl_error($cu);
+		}
+
+		curl_close($cu);
+
+		return $content;
+	}
+
+	/**
+	 * Finaliza a execução do script em caso de erro no HTTP
+	 */
+	function _validateHttpErrors($text) {
+		if (!preg_match("/HTTP.* [2][0][0-6]/i", $text)) {
+			$error = array();
+			preg_match_all("/\<title\>(.*)\<\/title\>/i", $text, $error);
+
+			$this->formattedOut(String::insert(__d('plugin', "\n[fg=black][bg=red] ERRO: :erro [/bg][/fg]\n", true), array('erro' =>  $error[1][0])));
+			$this->hr();
+			$this->_stop();
+		}
 	}
 }
 ?>
