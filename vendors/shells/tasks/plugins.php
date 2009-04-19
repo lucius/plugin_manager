@@ -36,8 +36,12 @@ class PluginsTask extends ImprovedCakeShell {
 			$this->error(String::insert(__d('plugin', 'Url de plugin inválida: :url', true), array('url' => $url)));
 		}
 		if (empty($params['name'])) {
-			//TODO: Solicitar para o usuário digitar um nome para o plugin
-			$this->error(String::insert(__d('plugin', 'Impossível determinar um nome para o plugin: :url', true), array('url' => $url)));
+			$name = $this->in(__d('plugin', 'digite o nome do plugin que está instalando (ou deixe vazio para encerrar): ', true));
+			$name = trim($name);
+			if (empty($name)) {
+				$this->stop();
+			}
+			$params['name'] = $name;
 		}
 		//TODO: Se $params['name'] já existir somente atualizar
 		$this->Installer->install($params['url'], $params['name']);

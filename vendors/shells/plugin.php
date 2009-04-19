@@ -47,7 +47,7 @@
                     $this->_list( );
                     break;
                 case 'install':
-                    ( isset($this->args[1]) ) ? $this->_install( $this->args[1] ) : $this->_missingParameter( );
+                    ( isset($this->args[1]) ) ? $this->_install( $this->args[1], @$this->args[2] ) : $this->_missingParameter( );
                     break;
                 case 'uninstall':
                     ( isset($this->args[1]) ) ? $this->_uninstall( $this->args[1] ) : $this->_missingParameter( );
@@ -184,9 +184,9 @@
 			$this->Plugins->listAll();
         }
 
-        function _install( $nameOrUrl )
+        function _install( $nameOrUrl, $name = null )
         {
-			$this->Plugins->install($nameOrUrl);
+			$this->Plugins->install($nameOrUrl, $name);
         }
 
         function _uninstall( $pluginName )
