@@ -6,7 +6,7 @@ App::import('Plugins', 'ImprovedCakeShell.ImprovedCakeShell');
  */
 class GitTask extends ImprovedCakeShell {
 	function install($url, $pluginPath) {
-		$this->_isGitSupported();
+		$this->_isSupported();
 
 		$return = true;
 
@@ -38,9 +38,9 @@ class GitTask extends ImprovedCakeShell {
 	/**
 	 * Verificar se o git está instalado e funcionando
 	 */
-	function _isGitSupported() {
+	function _isSupported() {
 		if (!shell_exec('git --version 2>/dev/null')) {
-			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO : GIT nao suportado [/fg][/bg]\n", true));
+			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO : GIT não suportado [/fg][/bg]\n", true));
 			$this->_stop();
 		}
 	}

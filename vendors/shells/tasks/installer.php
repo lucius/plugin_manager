@@ -14,7 +14,7 @@ class InstallerTask extends ImprovedCakeShell {
 
 		// $this->_create($name);
 		$path = $this->params['working'] . DS . 'plugins' . DS . $name;
-		if ($this->_install($url, $path)) {
+		if ($this->_install($url, $path, $name)) {
 			$this->formattedOut(__d('plugin', '[fg=black][bg=green]  OK  [/bg][/fg]', true));
 			$this->_createUrlFile($url, $path);
 			$this->_runInstallHook($name);
@@ -38,11 +38,11 @@ class InstallerTask extends ImprovedCakeShell {
 	/**
 	 * Instala o plugin, deverá ser sobreescrevida pelo instalador
 	 */
-	function _install($url, $path) {
+	function _install($url, $path, $name) {
         $this->formattedOut(__d('plugin', '  -> selecionando modo de instalacao: ', true), false);
 
 		if ($status = $this->Git->install($url, $path)) {
-		} else if ($status = $this->Svn->install($url, $path)) {
+		} else if ($status = $this->Svn->install($url, $path, $name)) {
 		}
 		return $status;
 	}
