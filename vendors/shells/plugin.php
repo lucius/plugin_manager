@@ -35,7 +35,7 @@
                     ( isset($this->args[1]) ) ? $this->_addRep( $this->args[1] ) : $this->_missingParameter( );
                     break;
                 case 'rem-rep':
-                    ( isset($this->args[1]) ) ? $this->_remRep( $this->args[1] ) : $this->_missingParameter( );
+                    $this->_remRep(( isset($this->args[1]) ) ? $this->_remRep( $this->args[1] ) : null);
                     break;
                 case 'list-rep':
                     ( isset($this->args[1]) ) ? $this->_listRep( $this->args[1] ) : $this->_listRep( );

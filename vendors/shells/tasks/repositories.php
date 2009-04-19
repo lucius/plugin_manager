@@ -42,8 +42,12 @@ class RepositoriesTask extends ImprovedCakeShell {
 	 * Remove um repositorio do arquivo .reps
 	 */
 	//TODO: Listar as urls para o usuário selecionar qual deseja remover
-	function remove($url) {
+	function remove($url = null) {
 		$this->formattedOut(String::insert(__d('plugin', '[fg=red]Excluindo[/fg] repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url' =>  $url)), false);
+
+		if (empty($url)) {
+			$url = $this->_select();
+		}
 
 		if (!$this->_find($url)) {
 			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O repositorio nao existe", true));
@@ -111,6 +115,29 @@ class RepositoriesTask extends ImprovedCakeShell {
 		}
 
 		return true;
+	}
+
+	function _select() {
+		$this->formattedOut(__d('plugin', 'Selecione um Repositorio para remover', true));
+		$this->out('');
+
+		foreach ($this->repositories as $key => $repository) {
+			$this->formattedOut(String::insert(__d('plugin', '[fg=green](:counter)[/fg]  [u]:rep_url[/u]', true), array('counter' => ($key + 1), 'rep_url' => $repository)));
+		}
+
+		$options = range(1, count($this->repositories));
+		$selected = $this->in(__d('plugin', '(q) para sair', true));
+		
+		if ($selected == 'q') {
+			$this->_stop();
+		}
+		
+		$selected = intval($selected) - 1;
+		
+		if (isset($this->repositories[$selected])) {
+			return $this->repositories[$selected];
+		}
+		return false;
 	}
 }
 ?>
