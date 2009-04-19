@@ -158,9 +158,7 @@
 
         function _find( $pluginName )
         {
-            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
-
-            $pluginsManager->find( $pluginName );
+			$this->Repositories->find($pluginName);
         }
 
         function _list( )

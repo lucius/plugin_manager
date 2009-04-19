@@ -2,7 +2,7 @@
 App::import('Plugins', 'ImprovedCakeShell.ImprovedCakeShell');
 
 class PluginsTask extends ImprovedCakeShell {
-	var $tasks = array('Installer');
+	var $tasks = array('Repositories', 'Installer');
 	/**
 	 * Lista todos os plugins instalados
 	 */

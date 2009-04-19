@@ -18,10 +18,10 @@ class RepositoriesTask extends ImprovedCakeShell {
 	 */
 	//TODO: Adicionar uma parametro $name ao repositorio para fácil acesso e identificacao
 	function add($url) {
-		$this->formattedOut(String::insert(__d('plugin', 'Inserindo repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url'=> $url)), false );
+		$this->formattedOut(String::insert(__d('plugin', 'Inserindo repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url'=> $url)), false);
 
 		if ($this->_isHttp($url)) {
-			if ($this->_find($url)) {
+			if ($this->_exists($url)) {
 				$this->formattedOut(__d('plugin', "[b] ... [/b]\n  -> O repositorio ja existe\n", true));
 				$this->hr();
 				$this->_stop();
@@ -50,7 +50,7 @@ class RepositoriesTask extends ImprovedCakeShell {
 			$url = $this->_select();
 		}
 
-		if (!$this->_find($url)) {
+		if (!$this->_exists($url)) {
 			$this->formattedOut(__d('plugin', "[bg=red][fg=black] ERRO [/fg][/bg]\n  -> O repositorio nao existe", true));
 			$this->out('');
 			$this->hr();
@@ -76,6 +76,36 @@ class RepositoriesTask extends ImprovedCakeShell {
 		$this->_show($url, $proxy);
 	}
 
+	function find($pattern, $proxy = false) {
+		$this->formattedOut(String::insert(__d('plugin', "Buscando plugins: [u]:pattern[/u]\n", true), array('pattern' => $pattern)));
+
+		$plugins = $this->_plugins();
+		$found = false;
+		foreach($plugins as $plugin) {
+			if (preg_match('/.*'. $pattern . '.*/', $plugin['name'])) {
+				$out = String::insert(__d('plugin', "[fg=green]    :pluginName", true), array('pluginName'=> $plugin['name']));
+
+				if ($this->Plugins->_exists($plugin['name'])) {
+					$out .= __d('plugin', " *[/fg]\n", true);
+				} else {
+					$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl'=> $plugin['url']));
+				}
+
+				$this->formattedOut($out);
+
+				$found = true;
+			}
+		}
+
+		if (!$found) {
+			$this->formattedOut(__d('plugin', "Nao foram encontrados plugins\n", true));
+			$this->hr();
+			$this->_stop();
+		}
+
+		$this->formattedOut(__d('plugin', '* Plugins ja instalados', true));
+	}
+
 	/**
 	 * Carrega a lista de repositorios do arquivo
 	 */
@@ -83,7 +113,7 @@ class RepositoriesTask extends ImprovedCakeShell {
 		if (!file_exists($this->path)) {
 			//TODO: Ao invés de mostrar um erro, cria um novo arquivo com o repositorio padrão
 			$errorMessage = String::insert(__d('plugin', " [fg=red]O arquivo de repositorios nao pode ser encontrado!\n O local correto do arquivo e :path [/fg]\n", true), array('path' => $this->path));
-			$this->formattedOut( $errorMessage );
+			$this->formattedOut($errorMessage);
 			$this->hr();
 			$this->_stop();
 		}
@@ -109,7 +139,7 @@ class RepositoriesTask extends ImprovedCakeShell {
 	/**
 	 * Localiza uma url na lista de repositorios
 	 */
-	function _find($url) {
+	function _exists($url) {
 		if (array_search($url, $this->repositories) === false) {
 			return false;
 		}
@@ -163,13 +193,13 @@ class RepositoriesTask extends ImprovedCakeShell {
 		$this->formattedOut(String::insert(__d('plugin', "Listando plugins disponiveis em [u]:rep_url[/u]\n", true), array('rep_url' => $url)));
 
 		$plugins = $this->_plugins($url, $proxy);
-		foreach ($plugins[2] as $key => $plugin) {
-			$out = String::insert(__d('plugin', "[fg=green]    :pluginTitle", true), array('pluginTitle'=> $plugin));
+		foreach ($plugins as $key => $plugin) {
+			$out = String::insert(__d('plugin', "[fg=green]    :pluginName", true), array('pluginName'=> $plugin['name']));
 
 			if ($this->Plugins->_exists($plugin)) {
 				$out .= __d('plugin', " *[/fg]\n", true);
 			} else {
-				$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl' => $plugins[1][$key]));
+				$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl' => $plugin['url']));
 			}
 
 			$this->formattedOut($out);
@@ -183,13 +213,26 @@ class RepositoriesTask extends ImprovedCakeShell {
 	/**
 	 * Retorna um array com os plugins do repositorio
 	 */
-	function _plugins($url, $proxy = false) {
+	function _plugins($url = null, $proxy = false) {
+		if (empty($url)) {
+			$url = $this->repositories;
+		}
+		if (is_array($url)) {
+			$repositories = $url;
+			$allPlugins = array();
+			foreach ($repositories as $repository) {
+				$plugins = $this->_plugins($repository, $proxy);
+				$allPlugins = array_merge($allPlugins, $plugins);
+			}
+			return $allPlugins;
+		}
+		
 		$content = $this->_html($url, $proxy); 
 
 		if ($content['erro']) {
 			$this->formattedOut(String::insert(__d('plugin', "\n[fg=black][bg=red] ERRO [/bg][/fg] :erro\n       Se voce usa proxy para se conectar a internet, tente usar a opcao\n       \"-proxy username:password@endereco.do.proxy:porta\"\n", true), array('erro' =>  $content['text'])));
 
-			$this->hr( );
+			$this->hr();
 			$this->_stop();
 		}
 
@@ -197,7 +240,7 @@ class RepositoriesTask extends ImprovedCakeShell {
 
 		$plugins = array();
 		$text = html_entity_decode($content['text']);
-		preg_match_all('/\<li\>\<a href="(.*)"\>(.*)\<\/a\>\<\/li\>/i', $text, $plugins);
+		preg_match_all('/\<li\>\<a href="(?P<url>.*)"\>(?P<name>.*)\<\/a\>\<\/li\>/i', $text, $plugins, PREG_SET_ORDER);
 
 		return $plugins;
 	}
