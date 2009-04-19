@@ -42,7 +42,6 @@ class RepositoriesTask extends ImprovedCakeShell {
 	/**
 	 * Remove um repositorio do arquivo .reps
 	 */
-	//TODO: Listar as urls para o usuário selecionar qual deseja remover
 	function remove($url = null) {
 		$this->formattedOut(String::insert(__d('plugin', '[fg=red]Excluindo[/fg] repositorio [u]:rep_url[/u] [/fg]', true), array('rep_url' =>  $url)), false);
 
@@ -79,31 +78,45 @@ class RepositoriesTask extends ImprovedCakeShell {
 	function find($pattern, $proxy = false) {
 		$this->formattedOut(String::insert(__d('plugin', "Buscando plugins: [u]:pattern[/u]\n", true), array('pattern' => $pattern)));
 
-		$plugins = $this->_plugins();
-		$found = false;
-		foreach($plugins as $plugin) {
-			if (preg_match('/.*'. $pattern . '.*/', $plugin['name'])) {
-				$out = String::insert(__d('plugin', "[fg=green]    :pluginName", true), array('pluginName'=> $plugin['name']));
+		$plugins = $this->_find($pattern, $proxy);
 
-				if ($this->Plugins->_exists($plugin['name'])) {
-					$out .= __d('plugin', " *[/fg]\n", true);
-				} else {
-					$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl'=> $plugin['url']));
-				}
-
-				$this->formattedOut($out);
-
-				$found = true;
-			}
-		}
-
-		if (!$found) {
+		if (empty($plugins)) {
 			$this->formattedOut(__d('plugin', "Nao foram encontrados plugins\n", true));
 			$this->hr();
 			$this->_stop();
 		}
 
+		foreach($plugins as $plugin) {
+			$out = String::insert(__d('plugin', "[fg=green]    :pluginName", true), array('pluginName'=> $plugin['name']));
+
+			if ($this->Plugins->_exists($plugin['name'])) {
+				$out .= __d('plugin', " *[/fg]\n", true);
+			} else {
+				$out .= String::insert(__d('plugin', "[/fg]\n      :pluginUrl\n", true), array('pluginUrl'=> $plugin['url']));
+			}
+
+			$this->formattedOut($out);
+		}
+
+
 		$this->formattedOut(__d('plugin', '* Plugins ja instalados', true));
+	}
+
+	/**
+	 * Retorna todos os plugins encontrados através do $pattern
+	 */
+	function _find($pattern, $proxy = false) {
+		$allPlugins = $this->_plugins();
+		if (empty($allPlugins)) {
+			return false;
+		}
+		$plugins = array();
+		foreach($allPlugins as $plugin) {
+			if (preg_match('/.*'. $pattern . '.*/', $plugin['name'])) {
+				$plugins[] = $plugin;
+			}
+		}
+		return $plugins;
 	}
 
 	/**

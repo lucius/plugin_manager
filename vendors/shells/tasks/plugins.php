@@ -33,7 +33,7 @@ class PluginsTask extends ImprovedCakeShell {
 		$params = $this->_extractParams($url, $name);
 
 		if ($params === false) {
-			$this->error(String::insert(__d('plugin', 'Url de plugin inválida: :url', true), array('url' => $url)));
+			$this->error(__d('plugin', 'Error', false), String::insert(__d('plugin', 'Url de plugin inválida: :url', true), array('url' => $url)));
 		}
 		if (empty($params['name'])) {
 			$name = $this->in(__d('plugin', 'digite o nome do plugin que está instalando (ou deixe vazio para encerrar): ', true));
@@ -189,8 +189,13 @@ class PluginsTask extends ImprovedCakeShell {
 	 */
 	function _extractParams($url, $name = null) {
 		if (!$this->_isUrl($url)) {
-			//TODO: Localizar um plugin com o nome = $url
-			return false;
+			$plugins = $this->Repositories->_find($url, @$this->params['proxy']);
+			if (count($plugins) == 1) {
+				$url  = $plugins[0]['url'];
+				$name = $plugins[0]['name'];
+			} else {
+				return false;
+			}
 		}
 		if (is_null($name)) {
 			if (preg_match('/(\w+)(\/|\.\w+)?$/', $url, $found)) {
