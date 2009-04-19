@@ -186,9 +186,7 @@
 
         function _install( $nameOrUrl )
         {
-            $pluginsManager = $this->_importPluginResource( 'PluginsManager', array( 'mainShell' => $this ) );
-
-            $pluginsManager->installPlugin( $nameOrUrl );
+			$this->Plugins->install($nameOrUrl);
         }
 
         function _uninstall( $pluginName )

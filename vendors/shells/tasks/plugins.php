@@ -1,13 +1,8 @@
 <?php
-if (!App::import('Plugins', 'ImprovedCakeShell.ImprovedCakeShell')) {
-	App::import('Vendors', 'InstallImprovedCakeShell.InstallImprovedCakeShell');
-
-	$installICS =& ClassRegistry::init('InstallImprovedCakeShell');
-
-	$installICS->install();
-}
+App::import('Plugins', 'ImprovedCakeShell.ImprovedCakeShell');
 
 class PluginsTask extends ImprovedCakeShell {
+	var $tasks = array('Installer');
 	/**
 	 * Lista todos os plugins instalados
 	 */
@@ -34,7 +29,18 @@ class PluginsTask extends ImprovedCakeShell {
 	/**
 	 * Instala um plugin a partir de uma url de repositório
 	 */
-	function install($url) {
+	function install($url, $name = null) {
+		$params = $this->_extractParams($url, $name);
+
+		if ($params === false) {
+			$this->error(String::insert(__d('plugin', 'Url de plugin inválida: :url', true), array('url' => $url)));
+		}
+		if (empty($params['name'])) {
+			//TODO: Solicitar para o usuário digitar um nome para o plugin
+			$this->error(String::insert(__d('plugin', 'Impossível determinar um nome para o plugin: :url', true), array('url' => $url)));
+		}
+		//TODO: Se $params['name'] já existir somente atualizar
+		$this->Installer->install($params['url'], $params['name']);
 	}
 
 	/**
@@ -58,6 +64,32 @@ class PluginsTask extends ImprovedCakeShell {
 
 		$url = file_get_contents($urlPluginPath);
 		return trim($url);
+	}
+
+	/**
+	 * Testa se $string é uma url de repositório válida
+	 */
+	function _isUrl($url) {
+		$prefix = array('git', 'svn', 'http', 'https', 'ssh', 'file');
+		$pattern = '/^(' . implode('|', $prefix) . '):\/\//';
+		return preg_match($pattern, $url);
+	}
+
+	/**
+	 * Extrai os parâmetros necessários para a instalação do plugin
+	 */
+	function _extractParams($url, $name = null) {
+		if (!$this->_isUrl($url)) {
+			//TODO: Localizar um plugin com o nome = $url
+			return false;
+		}
+		if (is_null($name)) {
+			if (preg_match('/(\w+)(\/|\.\w+)?$/', $url, $found)) {
+				$name = $found[1];
+			}
+		}
+		
+		return compact('url', 'name');
 	}
 }
 ?>
